@@ -12,7 +12,7 @@ const DB_URL = process.env.DATABASE_URL.replace(
 mongoose
   .connect(
     DB_URL,
-    // to deal some deprecation warning
+    // to deal some deprecation warningw
     {
       useNewUrlParser: true,
       useCreateIndex: true,

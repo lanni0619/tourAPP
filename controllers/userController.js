@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 // #2 ROUTE HANDLERS
 exports.getAllUsers = (req, res) => {
   res.status(500).json({
