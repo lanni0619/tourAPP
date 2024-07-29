@@ -147,5 +147,37 @@
     "imageCover": "tour-2-cover.jpg",
     "images": ["tour-2-1.jpg", "tour-2-2.jpg", "tour-2-3.jpg"],
     "startDates": ["2021-06-19,10:00", "2021-07-20,10:00", "2021-08-18,10:00"]
-  }
+  },
+  {
+    "id": 10,
+    "name": "Japan Culture Tour",
+    "duration": 6,
+    "maxGroupSize": 15,
+    "difficulty": "easy",
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 23,
+    "price": 400
+  },
+  {
+    "id": 11,
+    "name": "Vietnams Culture Tour",
+    "duration": 7,
+    "maxGroupSize": 15,
+    "difficulty": "easy",
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 23,
+    "price": 350
+  },
+  {
+    "id": 12,
+    "name": "Taichung Culture Tour",
+    "duration": 2,
+    "maxGroupSize": 5,
+    "difficulty": "easy",
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 23,
+    "price": 50
+  },
+  { "id": 13, "name": "test tour", "price": 1000 },
+  { "id": 14, "name": "test tour", "price": 1000 }
 ]
