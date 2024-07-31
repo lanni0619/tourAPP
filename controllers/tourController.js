@@ -74,7 +74,7 @@ exports.createTour = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      message: 'invalid data sent',
+      message: error,
     });
   }
 };
@@ -94,7 +94,7 @@ exports.updateTour = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      message: 'invalid data sent',
+      message: error,
     });
   }
 };
@@ -198,9 +198,9 @@ exports.getMonthlyPlan = async (req, res) => {
       {
         $sort: { numTourStarts: -1 },
       },
-      {
-        $limit: 3,
-      },
+      // {
+      //   $limit: 3,
+      // },
     ]);
     res.status(200).json({
       status: 'success',
