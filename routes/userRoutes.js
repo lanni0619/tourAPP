@@ -4,6 +4,11 @@ const authController = require('../controllers/authController');
 
 // A special endpoint doesn't fit RESTful
 router.post('/signup', authController.signup);
+router.post('/login', authController.login);
+
+// Password Reset Functionality
+router.post('/forgotPassword', authController.forgotPassword);
+router.patch('/resetPassword/:token', authController.resetPassword);
 
 // Fit RESTful philosophy
 router
