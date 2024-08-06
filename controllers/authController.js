@@ -18,6 +18,18 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
+  const cookiesOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIES_EXPIRES * 24 * 60 * 60 * 1000,
+    ),
+    secure: false,
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true;
+
+  res.cookie('jwt', token, cookiesOptions);
+
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -29,14 +41,16 @@ const createSendToken = (user, statusCode, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   // Security flaw
-  const newUser = await User.create(req.body);
-  // const { name, email, password, passwordConfirm } = req.body;
-  // const newUser = await User.create({
-  //   name,
-  //   email,
-  //   password,
-  //   passwordConfirm,
-  // });
+  // const newUser = await User.create(req.body);
+  const { name, email, password, passwordConfirm, role } = req.body;
+  const newUser = await User.create({
+    name,
+    email,
+    password,
+    passwordConfirm,
+    role,
+  });
+  newUser.password = undefined;
   createSendToken(newUser, 201, res);
 });
 
@@ -55,6 +69,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or passowrd!', 401));
   }
   // 3) If everything ok, send token to client
+  user.password = undefined;
   createSendToken(user, 200, res);
 });
 
