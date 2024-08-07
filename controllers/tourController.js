@@ -34,7 +34,8 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  // Virtual Populate (Course 11-157)
+  const tour = await Tour.findById(req.params.id).populate('reviews');
   if (!tour) {
     return next(new AppError('Can not found tour with that ID!', 404));
     // must have "return" or send two responses then occur bug.
