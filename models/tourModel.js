@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+// const validator = require('validator');
+// const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -81,8 +82,37 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    // sub-document
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
-  // option
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -95,12 +125,26 @@ tourSchema.virtual('durationWeek').get(function () {
   return this.duration / 7;
 });
 
+// Virtual Populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  // connecting foreign & local field
+  foreignField: 'tour',
+  localField: '_id',
+});
+
 // Document Middleware
 
-tourSchema.pre('save', function (next) {
-  // do something before document be saved
-  next();
-});
+// Modeling tour guides - Embedding
+// tourSchema.pre('save', async function (next) {
+//   // do something before document be saved
+//   const guidesPromise = this.guides.map((id) => {
+//     // query obejct to Promise
+//     return User.findById(id).exec();
+//   });
+//   this.guides = await Promise.all(guidesPromise);
+//   next();
+// });
 
 tourSchema.post('save', function (doc, next) {
   // do something after document be saved
@@ -112,6 +156,14 @@ tourSchema.post('save', function (doc, next) {
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.startTime = Date.now();
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-passwordChangedAt -__v',
+  });
   next();
 });
 

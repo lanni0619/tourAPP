@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const tourController = require('../controllers/tourController');
 const authController = require('../controllers/authController');
+const reviewRouter = require('./reviewRoutes');
 
 // middleware
 // router.param('id', tourController.checkID);
@@ -18,6 +19,10 @@ router
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour,
   );
+
+// Nested Route
+// POST /tours/$r321ew23412/reviews
+router.use('/:tourId/reviews', reviewRouter);
 
 router
   .route('/top-5-cheap')
