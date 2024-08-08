@@ -1,7 +1,9 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
+// Use in UpdateMe
 const filterObj = (reqBodyObj, ...allowedFields) => {
   const newObj = {};
   Object.keys(reqBodyObj).forEach((el) => {
@@ -11,17 +13,6 @@ const filterObj = (reqBodyObj, ...allowedFields) => {
   });
   return newObj;
 };
-
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find({});
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Send error if user POSTs password or passwordConfirm
@@ -58,28 +49,15 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
-
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'The api is building ...',
-  });
-};
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'fail',
-    message: 'The api is building ...',
+    message: 'This route is not define. Please use /signup instead',
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'The api is building ...',
-  });
-};
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'The api is building ...',
-  });
-};
+
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+// Don't update password with this!
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
