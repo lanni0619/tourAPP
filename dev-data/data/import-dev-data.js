@@ -35,9 +35,9 @@ const reviews = JSON.parse(
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
-    await Tour.create(tours);
+    // await Tour.create(tours);
     await User.create(users, { validateBeforeSave: false });
-    await Review.create(reviews);
+    // await Review.create(reviews);
     console.log('data successfully loaded!');
   } catch (error) {
     console.log(error);
@@ -48,9 +48,9 @@ const importData = async () => {
 // DELETE ALL DATA FROM COLLECTION
 const deleteData = async () => {
   try {
-    await Tour.deleteMany();
+    // await Tour.deleteMany();
     await User.deleteMany();
-    await Review.deleteMany();
+    // await Review.deleteMany();
     console.log('data successfully deleted!');
   } catch (error) {
     console.log(error);
