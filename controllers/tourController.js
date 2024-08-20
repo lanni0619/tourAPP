@@ -9,7 +9,7 @@ exports.aliasTopTours = (req, res, next) => {
   // sort=-ratingsAverage,price&fields=name,difficulty,duration,price,ratingsAverage&limit=5
   req.query.limit = 5;
   req.query.fields = 'name, difficulty, duration, price, ratingsAverage';
-  req.query.sort = '-ratingsAverage, price';
+  req.query.sort = '-ratingsAverage,price';
   next();
 };
 
@@ -21,17 +21,16 @@ exports.deleteTour = factory.deleteOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
-    {
-      // match stage
-      $match: { ratingsAverage: { $gte: 4.5 } },
-    },
+    // {
+    //   // match stage
+    //   $match: { ratingsAverage: { $gte: 4.5 } },
+    // },
     {
       // group stage
       $group: {
         // _id is used to filter data. null means all data
         // _id: { $toUpper: '$difficulty' },
-        _id: '$ratingsAverage',
-        // gonna add 1 for each document
+        _id: '$duration',
         numTours: { $sum: 1 },
         numRating: { $sum: '$ratingsQuantity' },
         // fieldName: { operator: '$fieldName' }
@@ -45,7 +44,7 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
       // 1 for ascending
     },
     {
-      $sort: { avgPrice: 1 },
+      $sort: { _id: 1 },
     },
     // we can repeat stages
     // {

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 // const validator = require('validator');
 // const User = require('./userModel');
 
@@ -138,6 +139,10 @@ tourSchema.virtual('reviews', {
 });
 
 // Document Middleware
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
 
 // Modeling tour guides - Embedding
 // tourSchema.pre('save', async function (next) {
