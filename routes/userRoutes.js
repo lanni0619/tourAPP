@@ -5,6 +5,7 @@ const authController = require('../controllers/authController');
 // A special endpoint doesn't fit RESTful
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
+router.get('/logout', authController.logout);
 // Password Reset Functionality
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
