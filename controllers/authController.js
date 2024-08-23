@@ -76,12 +76,18 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting JWT and check of it's there.
   let token;
+
+  // token from header (Postman)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    // token from cookies (Browser)
+    token = req.cookies.jwt;
   }
+
   if (!token) {
     return next(
       new AppError('You are not logged in. Please login to get access!', 401),
@@ -111,6 +117,44 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 1 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
+// Only for rendered pages (viewRoute), no errors!
+exports.isLoggedIn = async (req, res, next) => {
+  if (req.cookies.jwt) {
+    try {
+      // 1) Verify the token from cookies
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET,
+      );
+      // 2) check if user still exists
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) return next();
+      //   // 3) Check if user changed password after the token was issued
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+      //   // If there is a logged in user
+      //   // Put currentUser at "res.locals" then pug template could access.
+      //   // Use the function at viewRoute
+      //   // Build login/logut icon at /views/header.pug
+      res.locals.user = currentUser;
+      // Use return: make sure next() only can called once at the function
+      return next();
+    } catch (error) {
+      return next();
+    }
+  }
+  next();
+};
 
 // roles = ['admin','lead-guide' ...] we can extend it.
 exports.restrictTo = (...roles) => {

@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "description": "learning node, express and mongoDB",
   "main": "app.js",
+  "targets": {
+    "main": false
+  },
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "set NODE_ENV=production&& nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch": "esbuild ./public/js/index.js --bundle --outfile=./public/js/bundle.js --watch",
+    "build": "esbuild ./public/js/index.js --bundle --outfile=./public/js/bundle.js"
   },
   "author": "Roy Wang",
   "license": "ISC",
   "dependencies": {
     "9": "^0.0.1",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "core-js": "^3.38.1",
     "dotenv": "^16.4.5",
+    "esbuild": "0.23.1",
     "express": "^4.19.2",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.4.0",
