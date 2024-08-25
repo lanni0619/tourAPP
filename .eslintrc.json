@@ -16,10 +16,6 @@
     "prefer-destructuring": ["error", { "object": true, "array": false }],
     "prefer-arrow-callback": "off",
     "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }],
-    "arrow-body-style": [
-      "error",
-      "always"
-      // { "requireReturnForObjectLiteral": true }
-    ]
+    "arrow-body-style": ["error", "always"]
   }
 }

@@ -1,4 +1,5 @@
 const Tour = require('../models/tourModel');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
@@ -13,12 +14,14 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getTour = catchAsync(async (req, res) => {
+exports.getTour = catchAsync(async (req, res, next) => {
   const { slug } = req.params;
   const tour = await Tour.findOne({ slug }).populate(
     'reviews',
     'review rating user -tour',
   );
+
+  if (!tour) return next(new AppError('There is no tour with that name.', 404));
 
   // Mapbox GL JS requires the following CSP directives https://docs.mapbox.com/mapbox-search-js/guides/browsers/
   res

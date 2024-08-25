@@ -66,7 +66,7 @@
       console.log(result);
     } catch (error) {
       console.log(error);
-      showAlert("error", error.response.data.message);
+      showAlert("error", error.response.data.msg);
     }
   };
   var logout = async () => {
