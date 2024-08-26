@@ -15,6 +15,8 @@ const signToken = (id) => {
   });
 };
 
+// Controller
+
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
@@ -115,6 +117,10 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   // Grant access to protected routes
   req.user = currentUser;
+
+  // If there is a logged in user, put currentUser at "res.locals" then pug template could access.
+  res.locals.user = currentUser;
+
   next();
 });
 
@@ -142,11 +148,10 @@ exports.isLoggedIn = async (req, res, next) => {
       if (currentUser.changedPasswordAfter(decoded.iat)) {
         return next();
       }
-      //   // If there is a logged in user
-      //   // Put currentUser at "res.locals" then pug template could access.
-      //   // Use the function at viewRoute
-      //   // Build login/logut icon at /views/header.pug
+
+      // Udate user for pug template (Update user name at the header)
       res.locals.user = currentUser;
+
       // Use return: make sure next() only can called once at the function
       return next();
     } catch (error) {
@@ -240,18 +245,18 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1) Get user from collection
 
   const user = await User.findById(req.user._id).select('+password');
-  const { checkPassword, newPassword, newPasswordConfirm } = req.body;
+  const { passwordCurrent, password, passwordConfirm } = req.body;
 
   // 2) Check if POSTed current password is correct
 
-  if (!(await user.correctPassword(checkPassword, user.password)))
+  if (!(await user.correctPassword(passwordCurrent, user.password)))
     return next(
       new AppError('updatePassword error: Incorrect current password!', 401),
     );
 
   // 3) If so, update the password
-  user.password = newPassword;
-  user.passwordConfirm = newPasswordConfirm;
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
   await user.save();
 
   // 4) log user in, send JWT

@@ -1,7 +1,7 @@
 (() => {
   // public/js/mapbox.js
   console.log("Hello there from the client side");
-  var displayMap = (locations2) => {
+  var displayMap = (locations) => {
     mapboxgl.accessToken = "pk.eyJ1IjoibGFubmkwNjE5IiwiYSI6ImNtMDBsd2QxaTFydW4ya3I3OXNveDFlaDMifQ.KGRU7AyD2jJ5NmlDTQdwFg";
     const map = new mapboxgl.Map({
       container: "map",
@@ -14,7 +14,8 @@
       // interactive: false,
     });
     const bounds = new mapboxgl.LngLatBounds();
-    locations2.forEach((loc) => {
+    console.log(locations);
+    locations.forEach((loc) => {
       const el = document.createElement("div");
       el.className = "marker";
       new mapboxgl.Marker({
@@ -66,7 +67,7 @@
       console.log(result);
     } catch (error) {
       console.log(error);
-      showAlert("error", error.response.data.msg);
+      showAlert("error", error.response.data.message);
     }
   };
   var logout = async () => {
@@ -78,7 +79,9 @@
       console.log(result);
       if (result.data.status === "success") {
         showAlert("success", "Logged out successfully!");
-        location.reload(true);
+        window.setTimeout(() => {
+          location.assign("/");
+        }, 500);
       }
     } catch (error) {
       console.log(error.response);
@@ -86,12 +89,32 @@
     }
   };
 
+  // public/js/updateSetting.js
+  var updateSetting = async (data, type) => {
+    const url = type === "password" ? "http://localhost:3000/api/v1/users/updateMyPassword" : "http://localhost:3000/api/v1/users/updateMe";
+    try {
+      const result = await axios({
+        method: "PATCH",
+        url,
+        data
+      });
+      if (result.data.status === "success") {
+        showAlert("success", `${type.toUpperCase()} updated successfully!`);
+      }
+    } catch (error) {
+      console.log(error);
+      showAlert("error", error.response.data.msg);
+    }
+  };
+
   // public/js/index.js
   var mapBox = document.getElementById("map");
-  var loginForm = document.querySelector(".form");
+  var loginForm = document.querySelector(".form--login");
   var logOutBtn = document.querySelector(".nav__el--logout");
+  var userDataForm = document.querySelector(".form-user-data");
+  var userPasswordForm = document.querySelector(".form-user-password");
   if (mapBox) {
-    locations = JSON.parse(mapBox.dataset.locations);
+    const locations = JSON.parse(mapBox.dataset.locations);
     displayMap(locations);
   }
   if (loginForm) {
@@ -104,8 +127,32 @@
   }
   if (logOutBtn) {
     logOutBtn.addEventListener("click", (e) => {
-      console.log("logout");
       logout();
+    });
+  }
+  if (userDataForm) {
+    userDataForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      updateSetting({ name, email }, "userData");
+    });
+  }
+  if (userPasswordForm) {
+    userPasswordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      document.querySelector(".btn-update-password").textContent = "updating...";
+      const passwordCurrent = document.getElementById("password-current").value;
+      const password = document.getElementById("password").value;
+      const passwordConfirm = document.getElementById("password-confirm").value;
+      await updateSetting(
+        { passwordCurrent, password, passwordConfirm },
+        "password"
+      );
+      document.getElementById("password-current").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("password-confirm").value = "";
+      document.querySelector(".btn-update-password").textContent = "SAVE PASSWORD";
     });
   }
 })();
