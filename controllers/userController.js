@@ -33,6 +33,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
+  // put updatedUser at "res.locals" then pug template could access.
+  res.locals.user = updatedUser;
+
   res.status(200).json({
     status: 'success',
     data: {

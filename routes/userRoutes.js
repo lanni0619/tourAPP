@@ -1,6 +1,8 @@
-const router = require('express').Router();
+const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+
+const router = express.Router();
 
 // A special endpoint doesn't fit RESTful
 router.post('/signup', authController.signup);

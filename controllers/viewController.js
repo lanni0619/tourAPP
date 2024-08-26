@@ -1,7 +1,12 @@
+// Database
 const Tour = require('../models/tourModel');
+const User = require('../models/userModel');
+
+// Utils
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
+// Controllers
 exports.getOverview = catchAsync(async (req, res, next) => {
   // 1) Get tour data from collection
   const tours = await Tour.find();
@@ -41,3 +46,33 @@ exports.getloginForm = (req, res, next) => {
     title: 'Log into your account',
   });
 };
+
+exports.getAccount = (req, res) => {
+  res.status(200).render('account', {
+    title: 'Your Account',
+  });
+};
+
+// Method 1 - account.pug - Update User data by URL encoded
+// exports.updateUserData = catchAsync(async (req, res, next) => {
+//   const updateUser = await User.findByIdAndUpdate(
+//     req.user.id,
+//     {
+//       name: req.body.name,
+//       email: req.body.email,
+//     },
+//     {
+//       new: true,
+//       runValidators: true,
+//     },
+//   );
+
+//   // Update User data - method 1
+//   res.locals.user = updateUser;
+
+//   res.status(200).render('account', {
+//     title: 'Your Account',
+//     // Update User data - method 2
+//     // user: updateUser,
+//   });
+// });
