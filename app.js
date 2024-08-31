@@ -86,11 +86,6 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {
-  // res.status(404).json({
-  //   status: 'fail',
-  //   message: `Can not found ${req.originalUrl} on this server.`,
-  // });
-
   // if we pass anything into next, it will assume that it's an error.
   next(new AppError(`Can not found ${req.originalUrl} on this server.`, 404));
 });
