@@ -4,8 +4,8 @@ const dotenv = require('dotenv');
 // Subscribe Uncaught Exceptions
 // Example: console.log(x); (x is undefine variable)
 process.on('uncaughtException', (err) => {
-  console.log(`Uncaught Exception!💥 Shuting down...`);
-  console.log(err.name, err.message);
+  console.log(`💥[Uncaught Exception] Shuting down...`);
+  console.log(err);
   process.exit(1);
 });
 
@@ -27,8 +27,9 @@ const server = app.listen(port, () => {
 // Subscribe Unhandled Rejections
 // Last Safety Net
 process.on('unhandledRejection', (err) => {
-  console.log(`Unhandled Rejection!💥 Shuting down...`);
+  console.log(`💥[Unhandled Rejection] Error from outside of express.`);
   console.log(err.name, err.message);
+  console.log('Shuting down...');
   // https://nodejs.org/docs/v20.16.0/api/tls.html#serverclosecallback
   server.close(() => {
     process.exit(1);
@@ -36,5 +37,5 @@ process.on('unhandledRejection', (err) => {
 });
 
 // Uncaught Exception
-// After that, the entire node process is a so - called unclean state
+// After that, the entire node process is a so called unclean state
 // console.log(x);

@@ -12,11 +12,13 @@ const viewRouter = require('./routes/viewRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
 
 const app = express();
 
+// Setting of views engine
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -24,16 +26,13 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Serving static file
 // app.use(express.static(`${__dirname}/public`));
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set Security HTTP Header
-
 // let contentSecurityPolicy = false when use axios CDN
-
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// Development Logging
+// Morgan only used in development mode
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -46,7 +45,7 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Body parser: Ready data from body & into req.body object
+// Body parser
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
@@ -84,6 +83,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
   // if we pass anything into next, it will assume that it's an error.

@@ -1,7 +1,7 @@
 // Global Error handling middleware
 const AppError = require('../utils/appError');
 
-// isOperational Error
+// isOperational Error (Production mode)
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
   // 400 stand for bad req
@@ -16,12 +16,11 @@ const handleValidationDB = (err) => {
   const message = `Invalid input data: ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
-const handleJwtError = () => {
+const handleJwtError = () =>
   new AppError('🤔Invalid token. Please login again.', 401);
-};
-const handleJwtExpiredError = () => {
+
+const handleJwtExpiredError = () =>
   new AppError('🤔Token is expired. Please login again.', 401);
-};
 
 // Development Mode
 const sendErrorDev = (err, req, res) => {
@@ -85,13 +84,11 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
-    // 2) Prod Mode - simplify error information
-
-    // 3) Define simple error msg to client in prod mode
-
-    console.log(err);
+    // 2) Prod Mode
+    // build operational error or simplify error information
     let error = JSON.parse(JSON.stringify(err));
     error.message = err.message;
+    console.log(error);
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
@@ -100,7 +97,6 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'TokenExpiredError')
       error = handleJwtExpiredError(error);
 
-    console.log(error);
     sendErrorProd(error, req, res);
   }
 };

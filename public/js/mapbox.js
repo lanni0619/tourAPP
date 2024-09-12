@@ -1,8 +1,6 @@
 /* eslint-disable*/
 // Setting for node.js only
 
-console.log('Hello there from the client side');
-
 // https://docs.mapbox.com/mapbox-gl-js/guides
 
 export const displayMap = (locations) => {
@@ -18,7 +16,6 @@ export const displayMap = (locations) => {
   });
 
   const bounds = new mapboxgl.LngLatBounds();
-  console.log(locations);
 
   locations.forEach((loc) => {
     // Create marker

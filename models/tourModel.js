@@ -84,8 +84,8 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // GeoJSON Object
     startLocation: {
-      // GeoJSON
       type: {
         type: String,
         default: 'Point',
@@ -96,6 +96,10 @@ const tourSchema = new mongoose.Schema(
       description: String,
     },
     // sub-document
+    // Two notations: arrays of subdocuments & single nested subdocuments
+    // each document has own id
+    // they are saved whenever their top-level parent document is saved.
+    // https://mongoosejs.com/docs/subdocs.html
     locations: [
       {
         type: {
@@ -108,6 +112,7 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    // child referencing
     guides: [
       {
         type: mongoose.Schema.ObjectId,
@@ -121,16 +126,17 @@ const tourSchema = new mongoose.Schema(
   },
 );
 
+// A) Schema.prototype.index()
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
 tourSchema.index({ startLocation: '2dsphere' });
 
-// Virtual Properties
+// B) Virtual Properties
 tourSchema.virtual('durationWeek').get(function () {
-  return this.duration / 7;
+  return (this.duration / 7).toFixed(2);
 });
 
-// Virtual Populate
+// B1) Virtual Populate
 tourSchema.virtual('reviews', {
   ref: 'Review',
   // connecting foreign & local field
@@ -138,13 +144,16 @@ tourSchema.virtual('reviews', {
   localField: '_id',
 });
 
-// Document Middleware
+// C) Middleware
+// C1) Document Middleware - pre save hook
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-// Modeling tour guides - Embedding
+// Practice - Embedding(Denormalization)
+// Copy & paste guide data to the Tour
+
 // tourSchema.pre('save', async function (next) {
 //   // do something before document be saved
 //   const guidesPromise = this.guides.map((id) => {
@@ -155,44 +164,45 @@ tourSchema.pre('save', function (next) {
 //   next();
 // });
 
+// C2) Document Middleware - post save hook
 tourSchema.post('save', function (doc, next) {
   // do something after document be saved
   next();
 });
 
-// Query Middleware
-
+// C3) Query Middleware - pre hook
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.startTime = Date.now();
-  next();
-});
 
-tourSchema.pre(/^find/, function (next) {
+  // Populate guides fields with all kind of "find" query method
+
   this.populate({
     path: 'guides',
     select: '-passwordChangedAt -__v',
   });
+
   next();
 });
 
+// C4) Query Middleware - post hook
 tourSchema.post(/^find/, function (docs, next) {
-  // console.log(`Query took ${Date.now() - this.startTime} milliseconds!`);
+  // Calculate how much query time costed
+  console.log(`Query took ${Date.now() - this.startTime} milliseconds!`);
   next();
 });
 
-// Aggregation Middleware
+// C3) Aggregation Middleware
 // this point to current aggregation Object
 // It's will affect pipeline when call $geoNear
 
-// tourSchema.pre('aggregate', function (next) {
-//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-//   console.log(this.pipeline());
+tourSchema.pre('aggregate', function (next) {
+  // Except the secretTour
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // console.log(this.pipeline());
+  next();
+});
 
-//   next();
-// });
-
-// Convention: The first arugment must use Uppercase
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;

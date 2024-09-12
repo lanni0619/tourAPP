@@ -86,15 +86,19 @@ userSchema.methods.correctPassword = async function (
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+
+userSchema.methods.changedPasswordAfter = function (jwtIssuedAt) {
   if (this.passwordChangedAt) {
-    // string of date to msec to sec.
+    // Date.prototype.getTime() return numbers of milliseconds
+    // parseInt function - parses a string argument and returns an integer of the specified radix
+    // radix = decimal
     const changedTimeAt = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
-    return changedTimeAt > JWTTimestamp;
+    return changedTimeAt > jwtIssuedAt;
   }
   // False means not changes
   return false;
 };
+
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
 

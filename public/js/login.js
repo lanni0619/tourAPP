@@ -21,11 +21,36 @@ export const login = async (email, password) => {
         location.assign('/');
       }, 500);
     }
-    console.log(result);
   } catch (error) {
     console.log(error);
+    showAlert('error', error.response.data.msg);
+  }
+};
 
-    showAlert('error', error.response.data.message);
+export const signup = async (name, email, password, passwordConfirm) => {
+  try {
+    // 1) Send http request to node application
+    const result = await axios({
+      method: 'POST',
+      url: 'http://localhost:3000/api/v1/users/signup',
+      data: {
+        name,
+        email,
+        password,
+        passwordConfirm,
+      },
+    });
+
+    // 2) direct to homepage
+    if (result.data.status === 'success') {
+      showAlert('success', 'Signup successfully!');
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 500);
+    }
+  } catch (error) {
+    console.log(error);
+    showAlert('error', error.response.data.msg);
   }
 };
 
@@ -45,8 +70,7 @@ export const logout = async () => {
       // location.reload(true);
     }
   } catch (error) {
-    console.log(error.response);
-
+    console.log(error);
     showAlert('error', 'Error logging out! Try again.');
   }
 };
