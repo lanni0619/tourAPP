@@ -62,7 +62,7 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.aliasTopTours = (req, res, next) => {
+exports.top5Ratings = (req, res, next) => {
   // sort=-ratingsAverage,price&fields=name,difficulty,duration,price,ratingsAverage&limit=5
   req.query.limit = 5;
   req.query.fields = 'name, difficulty, duration, price, ratingsAverage';
@@ -71,7 +71,10 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 exports.getAllTours = factory.getAll(Tour);
-exports.getTour = factory.getOne(Tour, { path: 'reviews' });
+exports.getTour = factory.getOne(Tour, {
+  path: 'reviews',
+  select: 'review rating',
+});
 exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
@@ -79,15 +82,13 @@ exports.deleteTour = factory.deleteOne(Tour);
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     // {
-    //   // match stage
     //   $match: { ratingsAverage: { $gte: 4.5 } },
     // },
     {
       // group stage
       $group: {
-        // _id is used to filter data. null means all data
-        // _id: { $toUpper: '$difficulty' },
-        _id: '$duration',
+        // _id is used to classify data. null means all data
+        _id: { $toUpper: '$difficulty' },
         numTours: { $sum: 1 },
         numRating: { $sum: '$ratingsQuantity' },
         // fieldName: { operator: '$fieldName' }
@@ -96,17 +97,13 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
         minPrice: { $min: '$price' },
         maxPrice: { $max: '$price' },
       },
-      // Just can use new field name from the top
+      // Can only use new field name from the top for next stage
       // can not sort by collection field name
       // 1 for ascending
     },
     {
-      $sort: { _id: 1 },
+      $sort: { _id: -1 },
     },
-    // we can repeat stages
-    // {
-    //   $match: { _id: { $ne: 'EASY' } },
-    // },
   ]);
   res.status(200).json({
     status: 'success',
@@ -116,12 +113,14 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
   });
 });
 // Solve business problem
-exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
+// Find the top3 busy month in a specific year
+exports.getTop3busyMonth = catchAsync(async (req, res, next) => {
   // 2021
   const year = req.params.year * 1;
 
   const plan = await Tour.aggregate([
     {
+      // Deconstructs an array field from the input documents to output a document for each element.
       $unwind: '$startDates',
     },
     {
@@ -148,9 +147,9 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     {
       $sort: { numTourStarts: -1 },
     },
-    // {
-    //   $limit: 3,
-    // },
+    {
+      $limit: 3,
+    },
   ]);
   res.status(200).json({
     status: 'success',

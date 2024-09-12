@@ -15,7 +15,12 @@
     "class-methods-use-this": "off",
     "prefer-destructuring": ["error", { "object": true, "array": false }],
     "prefer-arrow-callback": "off",
-    "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }]
+    "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }],
+    "parser": "babel-eslint",
+    "parserOptions": {
+      "sourceType": "module",
+      "allowImportExportEverywhere": true
+    }
     // "arrow-body-style": ["error", "always"]
   }
 }

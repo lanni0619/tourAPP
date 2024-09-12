@@ -1,7 +1,7 @@
 // Packages
 const crypto = require('crypto');
-const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
 // Models
 const User = require('../models/userModel');
 // Functions
@@ -42,8 +42,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  // Security flaw
-  // const newUser = await User.create(req.body);
+  // Security flaw, don't use => const newUser = await User.create(req.body);
   const { name, email, password, passwordConfirm, role } = req.body;
   const newUser = await User.create({
     name,

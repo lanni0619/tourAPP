@@ -7,17 +7,15 @@ const router = express.Router();
 
 // 1) statistic route
 router
-  .route('/top-5-affordable')
-  .get(tourController.aliasTopTours, tourController.getAllTours);
+  .route('/top-5-ratings')
+  .get(tourController.top5Ratings, tourController.getAllTours);
 
 router.route('/tour-stats').get(tourController.getTourStats);
-router
-  .route('/monthly-plan/:year')
-  .get(
-    authController.protect,
-    authController.restrictTo('admin', 'lead-guide', 'guide'),
-    tourController.getMonthlyPlan,
-  );
+router.route('/monthly-plan/:year').get(
+  authController.protect,
+  // authController.restrictTo('admin', 'lead-guide', 'guide'),
+  tourController.getTop3busyMonth,
+);
 
 // 2) Geospatial Query - Finding Tours within Radius
 router
