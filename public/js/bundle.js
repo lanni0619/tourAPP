@@ -144,6 +144,30 @@
     }
   };
 
+  // public/js/review.js
+  var createReview = async (review, rating, tourID) => {
+    try {
+      const result = await axios({
+        method: "POST",
+        url: "http://localhost:3000/api/v1/reviews",
+        data: {
+          rating,
+          review,
+          tour: tourID
+        }
+      });
+      if (result.data.status === "success") {
+        showAlert("success", `Submit successfully!`);
+        window.setTimeout(() => {
+          location.reload();
+        }, 500);
+      }
+    } catch (error) {
+      console.log(error);
+      showAlert("error", error.response.data.msg);
+    }
+  };
+
   // public/js/index.js
   var mapBox = document.getElementById("map");
   var loginForm = document.querySelector(".form--login");
@@ -151,6 +175,7 @@
   var logOutBtn = document.querySelector(".nav__el--logout");
   var userDataForm = document.querySelector(".form-user-data");
   var userPasswordForm = document.querySelector(".form-user-password");
+  var userReviewForm = document.querySelector(".form-user-review");
   var bookBtn = document.getElementById("book-tour");
   if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
@@ -211,6 +236,16 @@
       e.target.textContent = "Processing...";
       const { tourid } = e.target.dataset;
       bookTour(tourid);
+    });
+  }
+  if (userReviewForm) {
+    userReviewForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const review = document.getElementById("review").value;
+      const rating = document.getElementById("rating").value;
+      const { tourid } = e.target.dataset;
+      console.log(tourid);
+      createReview(review, rating, tourid);
     });
   }
 })();
