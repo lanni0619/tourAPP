@@ -5,16 +5,20 @@ import { displayMap } from './mapbox.js';
 import { login, logout, signup } from './login.js';
 import { updateSetting } from './updateSetting.js';
 import { bookTour } from './stripe.js';
+import { createReview } from './review.js';
 
 // Values
 
 // Create DOM element
 const mapBox = document.getElementById('map');
+// auth
 const loginForm = document.querySelector('.form--login');
 const signupForm = document.querySelector('.form--signup');
 const logOutBtn = document.querySelector('.nav__el--logout');
+// form
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+const userReviewForm = document.querySelector('.form-user-review');
 const bookBtn = document.getElementById('book-tour');
 
 // Delegation
@@ -89,5 +93,16 @@ if (bookBtn) {
     e.target.textContent = 'Processing...';
     const { tourid } = e.target.dataset;
     bookTour(tourid);
+  });
+}
+if (userReviewForm) {
+  userReviewForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const review = document.getElementById('review').value;
+    const rating = document.getElementById('rating').value;
+    const { tourid } = e.target.dataset;
+    console.log(tourid);
+
+    createReview(review, rating, tourid);
   });
 }

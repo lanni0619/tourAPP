@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Tour = require('./tourModel');
+const AppError = require('../utils/appError');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -58,7 +59,19 @@ reviewSchema.statics.calAvgRatings = async function (tourId) {
   });
 };
 
-// document mddiewares - calAvgRatings after saved doc
+// document mddiewares
+// 1) Prevent duplicated review
+reviewSchema.pre('save', async function (next) {
+  const review = await Review.findOne({ user: this.user });
+  if (review)
+    return next(
+      new AppError(
+        '[Duplicated review] You have already submitted a review in this tour.',
+        400,
+      ),
+    );
+});
+// 2) calAvgRatings after saved doc
 reviewSchema.post('save', function () {
   // Review model is not yet define
   this.constructor.calAvgRatings(this.tour);
@@ -66,6 +79,8 @@ reviewSchema.post('save', function () {
 
 // Query Middlewares - populate user before query
 reviewSchema.pre(/^find/, function (next) {
+  this.sort('-createdAt');
+
   this.populate({
     path: 'user',
     select: 'name photo',

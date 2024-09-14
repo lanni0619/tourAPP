@@ -79,20 +79,31 @@ block content
         .reviews
             each review in tour.reviews
                 +reviewCard(review)
-
-    section.section-cta
-        .cta
-            .cta__img.cta__img--logo
-                img(src='/img/logo-white.png', alt='Natours logo')
-            img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='tour picture')
-            img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='tour picture')
-            .cta__content
-                h2.heading-secondary What are you waiting for?
-                p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
-                
-                if (user && !booking)
-                    button.btn.btn--red.span-all-rows#book-tour(data-tourID = `${tour.id}`) Click to Book
-                else if (user && booking)
-                    button.btn.btn--green.span-all-rows Already booked
-                else
-                    a.btn.btn--red.span-all-rows(href='/login') Login to book tour
+    if (!booking)
+        section.section-cta
+            .cta
+                .cta__img.cta__img--logo
+                    img(src='/img/logo-white.png', alt='Natours logo')
+                img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='tour picture')
+                img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='tour picture')
+                .cta__content
+                    h2.heading-secondary What are you waiting for?
+                    p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
+                    
+                    if (user)
+                        button.btn.btn--red.span-all-rows#book-tour(data-tourid = `${tour.id}`) Click to Book
+                    else
+                        a.btn.btn--red.span-all-rows(href='/login') Login to book tour
+    else if (!review)
+        .user-view__content
+            .user-view__form-container
+                h2.heading-secondary.ma-bt-md Write a review     
+                form.form.form-user-review(data-tourid = `${tour.id}`)
+                    .form__group
+                        label.form__label(for='rating') rating
+                        input#rating.form__input(type='number', min=1, max=5, step=0.1, required, name='rating')
+                    .form__group.ma-bt-md
+                        label.form__label(for='review') review
+                        input#review.form__input(type='text', required, name='review')
+                    .form__group.right
+                        button.btn.btn--small.btn--green Submit
