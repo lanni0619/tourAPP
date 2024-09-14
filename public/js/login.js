@@ -7,7 +7,7 @@ export const login = async (email, password) => {
     // 1) Send http request to node application
     const result = await axios({
       method: 'POST',
-      url: 'http://localhost:3000/api/v1/users/login',
+      url: '/api/v1/users/login',
       data: {
         email,
         password,
@@ -32,7 +32,7 @@ export const signup = async (name, email, password, passwordConfirm) => {
     // 1) Send http request to node application
     const result = await axios({
       method: 'POST',
-      url: 'http://localhost:3000/api/v1/users/signup',
+      url: '/api/v1/users/signup',
       data: {
         name,
         email,
@@ -58,9 +58,8 @@ export const logout = async () => {
   try {
     const result = await axios({
       method: 'GET',
-      url: 'http://localhost:3000/api/v1/users/logout',
+      url: '/api/v1/users/logout',
     });
-    console.log(result);
     if (result.data.status === 'success') {
       showAlert('success', 'Logged out successfully!');
       // reload from the server

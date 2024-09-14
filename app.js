@@ -1,4 +1,5 @@
 const path = require('path');
+// 3rd-party package
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -7,7 +8,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xssClean = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
-
+const compression = require('compression');
+// routes & controller
 const viewRouter = require('./routes/viewRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -68,6 +70,8 @@ app.use(
     ],
   }),
 );
+
+app.use(compression());
 
 // Self-define middleware
 app.use((req, res, next) => {

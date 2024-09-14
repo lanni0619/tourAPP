@@ -1,11 +1,9 @@
 /* eslint-disable */
 
-// console.log('Hello from parcel!');
 import { displayMap } from './mapbox.js';
 import { login, logout, signup } from './login.js';
 import { updateSetting } from './updateSetting.js';
 import { bookTour } from './stripe.js';
-import { createReview } from './review.js';
 
 // Values
 
@@ -101,8 +99,6 @@ if (userReviewForm) {
     const review = document.getElementById('review').value;
     const rating = document.getElementById('rating').value;
     const { tourid } = e.target.dataset;
-    console.log(tourid);
-
     createReview(review, rating, tourid);
   });
 }

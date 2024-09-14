@@ -188,7 +188,7 @@ tourSchema.pre(/^find/, function (next) {
 // C4) Query Middleware - post hook
 tourSchema.post(/^find/, function (docs, next) {
   // Calculate how much query time costed
-  console.log(`Query took ${Date.now() - this.startTime} milliseconds!`);
+  // console.log(`Query took ${Date.now() - this.startTime} milliseconds!`);
   next();
 });
 

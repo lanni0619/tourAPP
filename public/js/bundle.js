@@ -50,7 +50,7 @@
     try {
       const result = await axios({
         method: "POST",
-        url: "http://localhost:3000/api/v1/users/login",
+        url: "/api/v1/users/login",
         data: {
           email,
           password
@@ -71,7 +71,7 @@
     try {
       const result = await axios({
         method: "POST",
-        url: "http://localhost:3000/api/v1/users/signup",
+        url: "/api/v1/users/signup",
         data: {
           name,
           email,
@@ -94,9 +94,8 @@
     try {
       const result = await axios({
         method: "GET",
-        url: "http://localhost:3000/api/v1/users/logout"
+        url: "/api/v1/users/logout"
       });
-      console.log(result);
       if (result.data.status === "success") {
         showAlert("success", "Logged out successfully!");
         window.setTimeout(() => {
@@ -111,7 +110,7 @@
 
   // public/js/updateSetting.js
   var updateSetting = async (data, type) => {
-    const url = type === "password" ? "http://localhost:3000/api/v1/users/updateMyPassword" : "http://localhost:3000/api/v1/users/updateMe";
+    const url = type === "password" ? "/api/v1/users/updateMyPassword" : "/api/v1/users/updateMe";
     try {
       const result = await axios({
         method: "PATCH",
@@ -133,38 +132,11 @@
   );
   var bookTour = async (tourID) => {
     try {
-      const response = await axios(
-        `http://localhost:3000/api/v1/bookings/checkout-session/${tourID}`
-      );
-      console.log(response);
+      const response = await axios(`/api/v1/bookings/checkout-session/${tourID}`);
       window.location.assign(response.data.session.url);
     } catch (err) {
       console.log(err);
       showAlert("error");
-    }
-  };
-
-  // public/js/review.js
-  var createReview = async (review, rating, tourID) => {
-    try {
-      const result = await axios({
-        method: "POST",
-        url: "http://localhost:3000/api/v1/reviews",
-        data: {
-          rating,
-          review,
-          tour: tourID
-        }
-      });
-      if (result.data.status === "success") {
-        showAlert("success", `Submit successfully!`);
-        window.setTimeout(() => {
-          location.reload();
-        }, 500);
-      }
-    } catch (error) {
-      console.log(error);
-      showAlert("error", error.response.data.msg);
     }
   };
 
@@ -244,7 +216,6 @@
       const review = document.getElementById("review").value;
       const rating = document.getElementById("rating").value;
       const { tourid } = e.target.dataset;
-      console.log(tourid);
       createReview(review, rating, tourid);
     });
   }
