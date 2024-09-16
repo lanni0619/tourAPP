@@ -1111,7 +1111,6 @@ body {
   flex-direction: column;
   flex: 1 1 300px;
   min-width: 150px;
-  max-width: 300px;
 }
 .card__header {
   position: relative;
