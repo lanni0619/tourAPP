@@ -16,7 +16,6 @@
   "author": "Roy Wang",
   "license": "ISC",
   "dependencies": {
-    "9": "^0.0.1",
     "@stripe/stripe-js": "^4.4.0",
     "axios": "^1.7.5",
     "bcryptjs": "^2.4.3",
