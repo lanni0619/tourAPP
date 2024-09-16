@@ -1,6 +1,7 @@
 header.header
     nav.nav.nav--tours
         a.nav__el.nav__el--cta(href="/") Home
+        a.nav__el.nav__el--cta(href="/") Reviews
     .header__logo
         img(src="/img/logo-white.png" alt="Natours logo")
     nav.nav.nav--user
@@ -9,7 +10,8 @@ header.header
             a.nav__el.nav__el--logout.nav__el--cta log out
             a.nav__el(href="/me")
                 img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
-                span= user.name.split(' ')[0]
+                //- span= user.name.split(' ')[0]
+                span Profile
         else
             a.nav__el.nav__el--cta(href='/login') Login in
             a.nav__el.nav__el--cta(href='/signup') Sign up

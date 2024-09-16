@@ -1,16 +1,31 @@
-# Tours Application 🥾 | POST & BOOKING
+# Tours Application 🥾 | BOOKING & POSTING
+
+Deployment URL: https://tourapp-production.up.railway.app/
+
+## Outline
+
+- [Tech Stack](##Tech-Stack)
+- [Dependencies](##Dependencies)
+- [Website Guideline](##Website-Guideline)
+- [API Guideline](##API-Guideline)
+- [Technological Detail](##Technological-Detail)
 
 ## Tech Stack
-[![Node](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/docs/latest/api/)  
-for the servers runtime environment  
-[![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)  
-for the web framework  
-[![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/docs/)  
-for the NOSQL database  
-[![Pug](https://img.shields.io/badge/Pug-FFF?style=for-the-badge&logo=pug&logoColor=A86454)](https://pugjs.org/api/getting-started.html)  
-for the server site rendering  
+
+- For the servers runtime environment
+  [![Node](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/docs/latest/api/)
+
+- For the web framework
+  [![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)
+
+- For the NOSQL database
+  [![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/docs/)
+
+- For the server site rendering
+  [![Pug](https://img.shields.io/badge/Pug-FFF?style=for-the-badge&logo=pug&logoColor=A86454)](https://pugjs.org/api/getting-started.html)
 
 ## Dependencies
+
 [![@stripe/stripe-js](https://img.shields.io/badge/@stripe/stripe--js-%5E4.4.0-blue)](https://stripe.com/docs/js)
 [![axios](https://img.shields.io/badge/axios-%5E1.7.5-blue)](https://axios-http.com/docs/intro)
 [![bcryptjs](https://img.shields.io/badge/bcryptjs-%5E2.4.3-blue)](https://github.com/dcodeIO/bcrypt.js)
@@ -38,14 +53,27 @@ for the server site rendering
 [![validator](https://img.shields.io/badge/validator-%5E13.12.0-blue)](https://github.com/validatorjs/validator.js)
 [![xss-clean](https://img.shields.io/badge/xss--clean-%5E0.1.4-blue)](https://github.com/jsonmaur/xss-clean)
 
-## Guideline
-- CLICK [URL](https://tourapp-production.up.railway.app/) TO BROWSE WEBSITE
-- API document: [POSTMAN](https://web.postman.co/documentation/36501836-9ba6d4b5-89b0-4ca2-bc1b-5424c508cbca/publish?workspaceId=b8b80748-15ec-4d90-83ca-ad19452caf8f#content)
-- Take a look the [backend block diagram](https://drive.google.com/file/d/1xrgAqek2ow_CuhxzXMxvWQvAU3BZ8s7M/view?usp=sharing).
-- You can do the following actions on the website:
+## Website Guideline
 
-1. Signup an account
-2. Upload your photo
-3. Update password and email
-4. Book a tour with stripe(fake transaction)
-5. Create, edit & delete reviews on your booked tour.
+- Signup an account
+- In the Profile, you can do something like:
+
+  1. Update your email, password & photo
+  2. Find all your booked tours.
+  3. Find all reviews you leave and edit or delete it if you want.
+
+- In each tour detail, you can:
+  1. Find more information about this tour.
+  2. Find landmarks on the map for your daily itinerary.
+  3. Find all reviews in relation to this tour.
+  4. Book a tour (The button located at the bottom of page)
+     (Enter a fake credit card number to book | Connect to Financial API | Test Mode)
+  5. Leave a comment. The booking area will be replaced with review form if you have booked.
+
+## API Guideline
+
+- API document: [POSTMAN](https://web.postman.co/documentation/36501836-9ba6d4b5-89b0-4ca2-bc1b-5424c508cbca/publish?workspaceId=b8b80748-15ec-4d90-83ca-ad19452caf8f#content)
+
+## Technological Detail
+
+- [backend block diagram](https://drive.google.com/file/d/1xrgAqek2ow_CuhxzXMxvWQvAU3BZ8s7M/view?usp=sharing)

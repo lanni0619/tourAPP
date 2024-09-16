@@ -90,7 +90,7 @@ exports.getMyReviews = catchAsync(async (req, res, next) => {
   console.log(req.user.id);
   const reviews = await Review.find({ user: req.user.id }).populate({
     path: 'tour',
-    select: 'name',
+    select: 'name slug',
   });
 
   // 2) Rendering my-reviews page

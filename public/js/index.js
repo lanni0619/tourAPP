@@ -19,7 +19,7 @@ const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const userReviewForm = document.querySelector('.form-user-review');
 const bookBtn = document.getElementById('book-tour');
-const reviews = document.querySelector('.reviews');
+const myReviews = document.querySelector('.myReviews');
 
 // Delegation
 if (mapBox) {
@@ -105,15 +105,17 @@ if (userReviewForm) {
   });
 }
 
-if (reviews) {
-  reviews.addEventListener('click', (e) => {
+if (myReviews) {
+  myReviews.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
       const button = e.target;
-      const reviewsCard = button.closest('.reviews__card');
+      const reviewsCard = button.closest('.myReviews__card');
       const reviews = reviewsCard.parentNode;
       if (button.textContent === 'Delete') {
         const reviewId = button.dataset.reviewId;
-        const confirm = window.confirm('Are you sure to delete the review?');
+        const confirm = window.confirm(
+          'Are you sure you want to delete this comment?',
+        );
         if (confirm) {
           deleteReview(reviewId);
           setTimeout(() => {
@@ -136,7 +138,7 @@ if (reviews) {
 
         // InputReview
         const inputReview = document.createElement('textarea');
-        inputReview.style.width = '25.8rem';
+        inputReview.style.width = '20rem';
         inputReview.className = 'reviews__text';
         inputReview.value = reviewText.textContent;
 

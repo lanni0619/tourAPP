@@ -1,7 +1,7 @@
 extends base
 
 mixin myReviewCard(review)
-    .reviews__card
+    .myReviews__card
         .reviews__avatar
             a.reviews__tour(href=`/tour/${review.tour.slug}`)= review.tour.name
         p.reviews__text= review.review
@@ -41,6 +41,6 @@ block content
       .user-view__content
         .user-view__form-container
           h2.heading-secondary.ma-bt-md YOUR Reviews Page
-          .reviews
+          .myReviews
               each review in reviews
                   +myReviewCard(review)

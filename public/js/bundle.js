@@ -208,7 +208,7 @@
   var userPasswordForm = document.querySelector(".form-user-password");
   var userReviewForm = document.querySelector(".form-user-review");
   var bookBtn = document.getElementById("book-tour");
-  var reviews = document.querySelector(".reviews");
+  var myReviews = document.querySelector(".myReviews");
   if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
     displayMap(locations);
@@ -279,19 +279,21 @@
       createReview(review, rating, tourid);
     });
   }
-  if (reviews) {
-    reviews.addEventListener("click", (e) => {
+  if (myReviews) {
+    myReviews.addEventListener("click", (e) => {
       if (e.target.tagName === "BUTTON") {
         const button = e.target;
-        const reviewsCard = button.closest(".reviews__card");
-        const reviews2 = reviewsCard.parentNode;
+        const reviewsCard = button.closest(".myReviews__card");
+        const reviews = reviewsCard.parentNode;
         if (button.textContent === "Delete") {
           const reviewId = button.dataset.reviewId;
-          const confirm = window.confirm("Are you sure to delete the review?");
+          const confirm = window.confirm(
+            "Are you sure you want to delete this comment?"
+          );
           if (confirm) {
             deleteReview(reviewId);
             setTimeout(() => {
-              reviews2.removeChild(reviewsCard);
+              reviews.removeChild(reviewsCard);
             }, 500);
           }
         } else if (button.textContent === "Edit") {
@@ -304,7 +306,7 @@
           cancel.setAttribute("data-review-text", reviewText.textContent);
           const stars = reviewsCard.querySelectorAll(".reviews__star--active");
           const inputReview = document.createElement("textarea");
-          inputReview.style.width = "25.8rem";
+          inputReview.style.width = "20rem";
           inputReview.className = "reviews__text";
           inputReview.value = reviewText.textContent;
           const inputRating = document.createElement("input");
