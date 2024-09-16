@@ -30,7 +30,7 @@ html {
 body {
   line-height: 1.6;
   font-weight: 300;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Microsoft JhengHei', sans-serif;
   color: #777;
   padding: 3rem;
   min-height: 100vh;
@@ -309,12 +309,13 @@ body {
 .header {
   background-color: #444;
   padding: 0 5rem;
-  height: 8rem;
+  min-height: 8rem;
   position: relative;
   z-index: 100;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  flex-wrap: wrap;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
@@ -573,7 +574,7 @@ body {
 
 .mapboxgl-popup-content {
   text-align: center;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Microsoft JhengHei', sans-serif;
   padding: 1.5rem !important;
   font-size: 1.4rem;
   -webkit-box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15) !important;
@@ -616,6 +617,7 @@ body {
   -ms-scroll-snap-type: x mandatory;
   scroll-snap-type: x mandatory;
 }
+
 .reviews__card {
   width: 30rem;
   padding: 4rem;
@@ -627,6 +629,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  flex-wrap: wrap;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
@@ -867,6 +870,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  flex-wrap: wrap;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -922,6 +926,7 @@ body {
   border: none;
   cursor: pointer;
   font-family: inherit;
+  margin: 1rem;
 }
 .nav__el:hover,
 .nav__el:active {
@@ -1081,7 +1086,8 @@ body {
 .card-container {
   max-width: 120rem;
   margin: 0 auto;
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 7rem;
 }
@@ -1103,6 +1109,9 @@ body {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+  flex: 1 1 300px;
+  min-width: 150px;
+  max-width: 300px;
 }
 .card__header {
   position: relative;
@@ -1330,4 +1339,69 @@ body {
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
+}
+
+/* New changes by myself */
+.reviews__tour {
+  text-decoration: none;
+  color: #444;
+  font-size: 2rem;
+}
+
+.reviews__change {
+  width: 100%;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.review__edit {
+  text-transform: uppercase;
+  color: #ffffff;
+  transition: all 0.3s;
+  height: 2rem;
+  width: 6rem;
+  padding: 0.3rem 0;
+  border: unset;
+  background-color: #20bf6b;
+  border-radius: 0.5rem;
+}
+
+.review__delete {
+  text-transform: uppercase;
+  color: #ffffff;
+  transition: all 0.3s;
+  height: 2rem;
+  width: 6rem;
+  padding: 0.3rem 0;
+  border: unset;
+  background-color: rgb(255, 0, 0);
+  border-radius: 0.5rem;
+}
+
+.review__cancel {
+  text-transform: uppercase;
+  color: #ffffff;
+  transition: all 0.3s;
+  height: 2rem;
+  width: 6rem;
+  padding: 0.3rem 0;
+  border: unset;
+  background-color: black;
+  border-radius: 0.5rem;
+}
+
+.review__change:hover {
+  cursor: pointer;
+  -webkit-transform: translateY(-3px);
+  transform: translateY(-3px);
+  -webkit-box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15); */
+}
+
+.review__change:active {
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+  -webkit-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); */
 }

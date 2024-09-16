@@ -1,0 +1,45 @@
+extends base
+
+mixin navItem(link, icon, text, active)
+  li(class=`${active? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(xlink:href=`img/icons.svg#icon-${icon}`)
+      | #{text}
+
+block content
+  main.main
+    .user-view
+      nav.user-view__menu
+        ul.side-nav
+          +navItem('/me','settings','Settings', true)
+          +navItem('/my-bookings','briefcase','My bookings', false)
+          +navItem('/my-reviews','star','My reviews', false)
+          +navItem('#','credit-card','Billing', false)
+        -if (user.role==='admin')
+          .admin-nav
+            h5.admin-nav__heading Admin
+            ul.side-nav
+              +navItem('#', 'map', 'Manage tours')   
+              +navItem('#', 'users', 'Manage users')
+              +navItem('#', 'star', 'Manage reviews')
+              +navItem('#', 'briefcase', 'Manage bookings')
+
+      .user-view__content
+        .user-view__form-container
+            h2.heading-secondary.ma-bt-md YOUR Bookings Page
+            each tour,index in tours
+                .card
+                  h2=tour.name
+                    .card__footer
+                        p
+                            span.card__footer-value= `$${tour.price}`
+                            | 
+                            span.card__footer-text per person
+                        p.card__ratings
+                            span.card__footer-value= `${tour.ratingsAverage}`
+                            | 
+                            span.card__footer-text= `rating (${tour.ratingsQuantity})`
+                        a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`) Details
+                br
+                br

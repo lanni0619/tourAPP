@@ -62,7 +62,7 @@ reviewSchema.statics.calAvgRatings = async function (tourId) {
 // document mddiewares
 // 1) Prevent duplicated review
 reviewSchema.pre('save', async function (next) {
-  const review = await Review.findOne({ user: this.user });
+  const review = await Review.findOne({ user: this.user, tour: this.tour });
   if (review)
     return next(
       new AppError(

@@ -140,6 +140,65 @@
     }
   };
 
+  // public/js/review.js
+  var deleteReview = async (id) => {
+    try {
+      const result = await axios({
+        method: "DELETE",
+        url: `/api/v1/reviews/${id}`
+      });
+      if (result.data.status === "success") {
+        showAlert("success", "Delete review successfully!");
+        window.setTimeout(() => {
+          location.assign("/my-reviews");
+        }, 500);
+      }
+    } catch (error) {
+      showAlert("error", error.response.data.msg);
+    }
+  };
+  var createReview = async (review, rating, tourid) => {
+    try {
+      const result = await axios({
+        method: "POST",
+        url: "/api/v1/reviews",
+        data: {
+          review,
+          rating,
+          tour: tourid
+        }
+      });
+      if (result.data.status === "success") {
+        showAlert("success", "Create review successfully!");
+        window.setTimeout(() => {
+          location.reload();
+        }, 500);
+      }
+    } catch (error) {
+      showAlert("error", error.response.data.msg);
+    }
+  };
+  var editReview = async (rating, review, id) => {
+    try {
+      const result = await axios({
+        method: "PATCH",
+        url: `/api/v1/reviews/${id}`,
+        data: {
+          review,
+          rating
+        }
+      });
+      if (result.data.status === "success") {
+        showAlert("success", "Edit review successfully!");
+        window.setTimeout(() => {
+          location.reload();
+        }, 500);
+      }
+    } catch (error) {
+      showAlert("error", error.response.data.msg);
+    }
+  };
+
   // public/js/index.js
   var mapBox = document.getElementById("map");
   var loginForm = document.querySelector(".form--login");
@@ -149,6 +208,7 @@
   var userPasswordForm = document.querySelector(".form-user-password");
   var userReviewForm = document.querySelector(".form-user-review");
   var bookBtn = document.getElementById("book-tour");
+  var reviews = document.querySelector(".reviews");
   if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
     displayMap(locations);
@@ -217,6 +277,79 @@
       const rating = document.getElementById("rating").value;
       const { tourid } = e.target.dataset;
       createReview(review, rating, tourid);
+    });
+  }
+  if (reviews) {
+    reviews.addEventListener("click", (e) => {
+      if (e.target.tagName === "BUTTON") {
+        const button = e.target;
+        const reviewsCard = button.closest(".reviews__card");
+        const reviews2 = reviewsCard.parentNode;
+        if (button.textContent === "Delete") {
+          const reviewId = button.dataset.reviewId;
+          const confirm = window.confirm("Are you sure to delete the review?");
+          if (confirm) {
+            deleteReview(reviewId);
+            setTimeout(() => {
+              reviews2.removeChild(reviewsCard);
+            }, 500);
+          }
+        } else if (button.textContent === "Edit") {
+          const reviewText = reviewsCard.querySelector(".reviews__text");
+          const reviewRatingBox = reviewsCard.querySelector(".reviews__rating");
+          let cancel = document.createElement("button");
+          cancel.className = "review__change review__cancel";
+          cancel.id = "review__cancel";
+          cancel.textContent = "Cancel";
+          cancel.setAttribute("data-review-text", reviewText.textContent);
+          const stars = reviewsCard.querySelectorAll(".reviews__star--active");
+          const inputReview = document.createElement("textarea");
+          inputReview.style.width = "25.8rem";
+          inputReview.className = "reviews__text";
+          inputReview.value = reviewText.textContent;
+          const inputRating = document.createElement("input");
+          inputRating.className = "reviews__rating-input";
+          inputRating.type = "number";
+          inputRating.value = stars.length;
+          reviewsCard.insertBefore(inputReview, reviewText);
+          reviewsCard.insertBefore(inputRating, reviewRatingBox);
+          reviewsCard.append(cancel);
+          reviewsCard.removeChild(reviewText);
+          button.textContent = "Save";
+          button.setAttribute("data-review-id", button.dataset.reviewId);
+        } else if (button.textContent === "Cancel") {
+          const cancelBtn = reviewsCard.querySelector(".review__cancel");
+          const editBtn = reviewsCard.querySelector(".review__edit");
+          const reviewTextContent = cancelBtn.dataset.reviewText;
+          const inputReview = reviewsCard.querySelector(".reviews__text");
+          const inputRating = reviewsCard.querySelector(".reviews__rating-input");
+          const reviewText = document.createElement("p");
+          reviewText.className = "reviews__text";
+          reviewText.textContent = reviewTextContent;
+          reviewsCard.insertBefore(reviewText, inputReview);
+          reviewsCard.removeChild(inputReview);
+          reviewsCard.removeChild(inputRating);
+          reviewsCard.removeChild(cancelBtn);
+          editBtn.textContent = "Edit";
+        } else if (button.textContent === "Save") {
+          const inputReview = reviewsCard.querySelector(".reviews__text");
+          const inputRating = reviewsCard.querySelector(".reviews__rating-input");
+          const cancelBtn = reviewsCard.querySelector(".review__cancel");
+          reviewsCard.removeChild(cancelBtn);
+          const reviewText = document.createElement("p");
+          reviewText.className = "reviews__text";
+          reviewText.textContent = inputReview.value;
+          reviewsCard.insertBefore(reviewText, inputReview);
+          reviewsCard.removeChild(inputReview);
+          reviewsCard.removeChild(inputRating);
+          editReview(
+            +inputRating.value,
+            reviewText.textContent,
+            button.dataset.reviewId
+          );
+          button.textContent = "Edit";
+        }
+      }
     });
   }
 })();

@@ -20,6 +20,7 @@ router.get(
   authController.protect,
   viewController.getMyBookings,
 );
+router.get('/my-reviews', authController.protect, viewController.getMyReviews);
 
 // router.post(
 //   '/submit-user-data',

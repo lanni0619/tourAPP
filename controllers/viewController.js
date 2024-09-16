@@ -79,9 +79,24 @@ exports.getMyBookings = catchAsync(async (req, res, next) => {
 
   const tours = await Tour.find({ _id: { $in: toursID } });
 
-  res.status(200).render('overview', {
+  res.status(200).render('myBookings', {
     title: 'My Bookings',
     tours,
+  });
+});
+
+exports.getMyReviews = catchAsync(async (req, res, next) => {
+  // 1) Find reviews by userID
+  console.log(req.user.id);
+  const reviews = await Review.find({ user: req.user.id }).populate({
+    path: 'tour',
+    select: 'name',
+  });
+
+  // 2) Rendering my-reviews page
+  res.status(200).render('myReviews', {
+    title: 'My Reviews',
+    reviews,
   });
 });
 
