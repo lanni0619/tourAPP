@@ -92,8 +92,8 @@ You can find all available API function & description in the [POSTMAN Document](
 
 ## Technological Block Diagram
 
-- Backend - Using MVC Architecture
+- Backend - MVC Architecture  
   <img src="https://i.imgur.com/akq64Dq.jpeg" alt="backend-architecture" style="width:500px;"/>
-- Error handler - Process error message in different way between development & production mode
+- Error handler - Process error message in different way between development & production mode  
   <img src="https://i.imgur.com/g5FyCWJ.jpeg" alt="error-handler" style="width:500px;"/>
 - More detail about routes & controller ([Click Me](https://drive.google.com/file/d/1xrgAqek2ow_CuhxzXMxvWQvAU3BZ8s7M/view?usp=sharing))
