@@ -20,6 +20,8 @@ const errorController = require('./controllers/errorController');
 
 const app = express();
 
+app.enable('trust proxy');
+
 // Setting of views engine
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));

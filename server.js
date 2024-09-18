@@ -36,6 +36,9 @@ process.on('unhandledRejection', (err) => {
   });
 });
 
-// Uncaught Exception
-// After that, the entire node process is a so called unclean state
-// console.log(x);
+process.on('SIGTERM', () => {
+  console.log('SIGTERM RECEIVED, Shutting down gracefully🫶');
+  server.close(() => {
+    console.log('Process terminated🤚');
+  });
+});

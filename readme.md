@@ -67,11 +67,11 @@
   2. Find landmarks on the map for your daily itinerary.
   3. Find all reviews in relation to this tour.
   4. Book a tour (The button located at the bottom of page)
-  5. Enter a fake credit card number to book (Use Financial API called Stripe | Test Mode)
-  6. Leave a comment. The booking button will be replaced with review form if you have booked.<br><br>
-- Other features must use API function such as post a tour, forgetPassword & resetPassword ...etc<br><br>
+  5. Enter a fake credit card number to book (4242 4242 4242 4242 | Expired date, CVS & name are not specified)
+  6. Leave a comment. Booking button will be replaced with review form if you have booked.<br><br>
+- Other features must use API function such as POST tour, forgetPassword & resetPassword ...etc<br><br>
 - Test account
-  - Lead-guide (email: aarav@example.com, password: test1234) which have authorization to post tour by API.
+  - Lead-guide account (email: aarav@example.com, password: test1234) which have authorization to post tour by API.
 
 ## API Guideline
 
@@ -80,7 +80,9 @@ You can find all available API function & description in the [POSTMAN Document](
 - Auth API
 
   - Please log in using "login" API before accessing data.
-  - Use forgetPassword route to get resetPassword URL(Send to your email) if you forgot your password.
+  - Use forgetPassword route to get resetPassword URL if you forgot your password.
+  - The resetPassword URL will be sent to your email which you registered with.
+  - The resetPassword URL will expire in 10 minutes.
 
 - Data API
 
