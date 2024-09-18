@@ -9,6 +9,7 @@ const xssClean = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 // routes & controller
 const viewRouter = require('./routes/viewRoutes');
 const tourRouter = require('./routes/tourRoutes');
@@ -27,6 +28,12 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // ---------- Global middlewares ----------
+// Implement CORS (Also available use in specific route)
+// https://github.com/expressjs/cors/blob/master/lib/index.js
+// default: allow any origin
+app.use(cors());
+// HTTP Method - OPTIONS https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
+app.options('*', cors());
 
 // Serving static file
 // app.use(express.static(`${__dirname}/public`));
@@ -86,7 +93,7 @@ app.use((req, res, next) => {
 
 // ---------- API Routes ----------
 app.use('/', viewRouter);
-app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/tours', cors(), tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
