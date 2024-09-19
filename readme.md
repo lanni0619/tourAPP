@@ -9,6 +9,11 @@
 - [Website Guideline](#Website-Guideline)
 - [API Guideline](#API-Guideline)
 - [Technological Detail](#Technological-Detail)
+  - [Code Architecture](#Code-Architecture)
+  - [View Route](#View-Route)
+  - [Tour Route](#Tour-Route)
+  - [Review Route](#Review-Route)
+  - [User Route](#User-Route)
 
 ## Tech Stack
 
@@ -91,7 +96,7 @@
 
 ## Technological Detail
 
-##### Code Architecture
+### Code Architecture
 
 <img src="https://i.imgur.com/FURkkmY.jpeg" alt="backend-architecture" style="width:500px;"/>
 
@@ -107,7 +112,7 @@
   - Validating user input data.
   - Ensuring only users who bought tour can review it.
 
-##### View Route
+### View Route
 
 <img src="https://i.imgur.com/N1pLRR5.jpeg" alt="view-route" style="width:500px;"/>
 
@@ -115,7 +120,7 @@
 - The "isLoggedIn" middleware is only used to detect login or not.
 - The "protect" middleware must login to access.
 
-##### Tour Route
+### Tour Route
 
 <img src="https://i.imgur.com/a0wv5ka.jpeg" alt="tour-route" style="width:500px;"/>
 
@@ -123,7 +128,7 @@
 - CRUD operations are comply with RESTful architecture.
 - Statistic data API are built by mongodb aggregation pipeline.
 
-##### Review Route
+### Review Route
 
 <img src="https://i.imgur.com/c2m3cfP.jpeg" alt="tour-route" style="width:500px;"/>
 
@@ -131,7 +136,7 @@
 - CRUD operations are comply with RESTful architecture.
 - Statistic data API are built by mongodb aggregation pipeline.
 
-##### User Route
+### User Route
 
 <img src="https://i.imgur.com/fCJt78l.jpeg" alt="user-route" style="width:500px;"/>
 
