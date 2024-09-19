@@ -17,10 +17,17 @@
 
 ## Tech Stack
 
-[**Node.js**](https://nodejs.org/docs/latest/api/) for the servers runtime environment.
-[**Express.js**](https://expressjs.com/) for the web framework.
-[**MongoDB**](https://www.mongodb.com/docs/) for the NOSQL database.
-[**Pug**](https://pugjs.org/api/getting-started.html) for the server site rendering.
+- For the servers runtime environment  
+  [![Node](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/docs/latest/api/)
+
+- For the web framework  
+  [![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)
+
+- For the NOSQL database  
+  [![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/docs/)
+
+- For the server site rendering  
+  [![Pug](https://img.shields.io/badge/Pug-FFF?style=for-the-badge&logo=pug&logoColor=A86454)](https://pugjs.org/api/getting-started.html)
 
 ## Dependencies
 
@@ -81,15 +88,15 @@
 
 **Auth API**
 
-- Please log in using "login" API before accessing data.
-- Use forgetPassword route to get resetPassword URL if you forgot your password.
+- Please use "GET /login" API to get token before accessing data.
+- Use GET "/forgetPassword" API to get resetPassword URL if you forgot your password.
 - The resetPassword URL will be sent to your email which you registered with.
 - The resetPassword URL will expire in 10 minutes.
 
 **Data API**
 
-- We have 4 type of data which you can access by api function.
-- Tour data is opened to all users including those who are not logged in.
+- We have 4 type of data which you can access by API.
+- Tour data is opened to all users no need to login.
 - Review data are only for "user" & "admin" account.
 - Booking data are only for "lead-guide" & "admin" acount.
 - User data are only for "admin" account.
@@ -98,15 +105,15 @@
 
 ### Code Architecture
 
-<img src="https://i.imgur.com/FURkkmY.jpeg" alt="backend-architecture" style="width:500px;"/>
+<img src="https://i.imgur.com/FURkkmY.jpeg" alt="backend-architecture" style="width:500px; border-radius:1rem"/>
 
 - Using MVC architecture
 - Separating routers and controllers to keep the codebase organized, maintainable, and scalable.
-- In controller, it's only concern about application's implementation such as:
+- In controller, it's only concern about application's implementation:
   - Managing requests and responses.
   - About app's more technical aspects.
   - Bridge between model and view layers.
-- The model which acutally solves the business problem such as
+- The model which acutally solves the business problem:
   - Create a tours in database.
   - Checking if user's password is correct.
   - Validating user input data.
@@ -114,7 +121,7 @@
 
 ### View Route
 
-<img src="https://i.imgur.com/N1pLRR5.jpeg" alt="view-route" style="width:500px;"/>
+<img src="https://i.imgur.com/N1pLRR5.jpeg" alt="view-route" style="width:500px; border-radius:1rem"/>
 
 - All data used to displayed with the front end are processed in view routes
 - The "isLoggedIn" middleware is only used to detect login or not.
@@ -122,26 +129,29 @@
 
 ### Tour Route
 
-<img src="https://i.imgur.com/a0wv5ka.jpeg" alt="tour-route" style="width:500px;"/>
+<img src="https://i.imgur.com/a0wv5ka.jpeg" alt="tour-route" style="width:500px; border-radius:1rem"/>
 
-- This routes contain basic CRUD operation, statistic and geospatial query api.
-- CRUD operations are comply with RESTful architecture.
+- This route contain basic CRUD operation, statistic and geospatial query api.
+- CRUD operations is comply with RESTful architecture.
 - Statistic data API are built by mongodb aggregation pipeline.
 
 ### Review Route
 
-<img src="https://i.imgur.com/c2m3cfP.jpeg" alt="tour-route" style="width:500px;"/>
+<img src="https://i.imgur.com/c2m3cfP.jpeg" alt="tour-route" style="width:500px; border-radius:1rem"/>
 
-- This routes contain basic CRUD operation, statistic and geospatial query api.
-- CRUD operations are comply with RESTful architecture.
-- Statistic data API are built by mongodb aggregation pipeline.
+- This route is about operation of creating, reading, updating & deleting review data.
+- CRUD operation is comply with RESTful architecture.
+- This routes are protected by JWT and must login to access.
+- POST, PATCH & DELETE are restrict to specified user & admin.
+- Booking Route is similar with review route.
 
 ### User Route
 
-<img src="https://i.imgur.com/fCJt78l.jpeg" alt="user-route" style="width:500px;"/>
+<img src="https://i.imgur.com/fCJt78l.jpeg" alt="user-route" style="width:500px; border-radius:1rem"/>
 
-- CRUD operation is similar with other route but only restrict to admin.
-- POST /forgotPassword route will send resetPassword URL with token to your email.
+- CRUD operation is similar with other route & not shown here.
+- Only admin have right to CRUD user data.
+- When hit the POST /forgotPassword route, the resetPassword URL with token will be sent to your email.
 - PATCH /updateMe route is used to update user name, email and avatar.
 - PATCH /deleteMe route is only change account to inactive account.
 - Only admin have right to truly delete account.
