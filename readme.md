@@ -48,7 +48,7 @@
 
 ## Website Guideline
 
-**Signup an account if this's your first time here.**<br>
+**Signup an account if this's your first time here.**<br><br>
 **In the Profile, you can do something like:**
 
 1. Update your email, password & photo
@@ -109,7 +109,7 @@
 
 ##### View Route
 
-<img src="https://i.imgur.com/kwwtTlu.jpeg" alt="view-route" style="width:500px;"/>
+<img src="https://i.imgur.com/N1pLRR5.jpeg" alt="view-route" style="width:500px;"/>
 
 - All data used to displayed with the front end are processed in view routes
 - The "isLoggedIn" middleware is only used to detect login or not.
@@ -117,7 +117,7 @@
 
 ##### Tour Route
 
-<img src="https://i.imgur.com/Fvo1rn3.jpeg" alt="tour-route" style="width:500px;"/>
+<img src="https://i.imgur.com/a0wv5ka.jpeg" alt="tour-route" style="width:500px;"/>
 
 - This routes contain basic CRUD operation, statistic and geospatial query api.
 - CRUD operations are comply with RESTful architecture.
@@ -125,7 +125,7 @@
 
 ##### Review Route
 
-<img src="https://i.imgur.com/Kml4UvL.jpeg" alt="tour-route" style="width:500px;"/>
+<img src="https://i.imgur.com/c2m3cfP.jpeg" alt="tour-route" style="width:500px;"/>
 
 - This routes contain basic CRUD operation, statistic and geospatial query api.
 - CRUD operations are comply with RESTful architecture.
@@ -133,7 +133,7 @@
 
 ##### User Route
 
-<img src="https://i.imgur.com/gwVzj9w.jpeg" alt="user-route" style="width:500px;"/>
+<img src="https://i.imgur.com/fCJt78l.jpeg" alt="user-route" style="width:500px;"/>
 
 - CRUD operation is similar with other route but only restrict to admin.
 - POST /forgotPassword route will send resetPassword URL with token to your email.
