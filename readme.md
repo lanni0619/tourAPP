@@ -125,7 +125,7 @@
 
 - All data used to displayed with the front end are processed in view routes
 - The "isLoggedIn" middleware is only used to detect login or not.
-- The "protect" middleware must login to access.
+- Those route protected by protect middleware (JWT) should login first to access.
 
 ### Tour Route
 
