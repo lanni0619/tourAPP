@@ -105,7 +105,7 @@
 
 ### Code Architecture
 
-<img src="https://i.imgur.com/FURkkmY.jpeg" alt="backend-architecture" style="width:500px; border-radius:1rem"/>
+<img src="https://i.imgur.com/0yhmQE0.jpeg" alt="backend-architecture" style="width:500px; border-radius:1rem"/>
 
 - Using MVC architecture
 - Separating routers and controllers to keep the codebase organized, maintainable, and scalable.
