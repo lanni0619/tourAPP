@@ -123,16 +123,16 @@
 
 <img src="https://i.imgur.com/N1pLRR5.jpeg" alt="view-route" style="width:500px; border-radius:1rem"/>
 
-- All data used to displayed with the front end are processed in view routes
+- All data used to displayed with the front-end are processed in view routes
 - The "isLoggedIn" middleware is only used to detect login or not.
-- Those route protected by protect middleware (JWT) should login first to access.
+- Those route protected by protect middleware (JWT) should login before accessing.
 
 ### Tour Route
 
 <img src="https://i.imgur.com/a0wv5ka.jpeg" alt="tour-route" style="width:500px; border-radius:1rem"/>
 
 - This route contain basic CRUD operation, statistic and geospatial query api.
-- CRUD operations is comply with RESTful architecture.
+- CRUD is comply with RESTful architecture.
 - Statistic data API are built by mongodb aggregation pipeline.
 
 ### Review Route
@@ -140,18 +140,18 @@
 <img src="https://i.imgur.com/c2m3cfP.jpeg" alt="tour-route" style="width:500px; border-radius:1rem"/>
 
 - This route is about operation of creating, reading, updating & deleting review data.
-- CRUD operation is comply with RESTful architecture.
-- This routes are protected by JWT and must login to access.
-- POST, PATCH & DELETE are restrict to specified user & admin.
-- Booking Route is similar with review route.
+- CRUD is comply with RESTful architecture.
+- Review Route are protected by JWT and must login before accessing.
+- POST, PATCH & DELETE operations are restrict to specified user & admin.
+- Booking Route is similar with review route so that not shown here.
 
 ### User Route
 
 <img src="https://i.imgur.com/fCJt78l.jpeg" alt="user-route" style="width:500px; border-radius:1rem"/>
 
-- CRUD operation is similar with other route & not shown here.
+- CRUD operation is similar with other route so that not shown here.
 - Only admin have right to CRUD user data.
-- When hit the POST /forgotPassword route, the resetPassword URL with token will be sent to your email.
+- When hitting the POST /forgotPassword route, the resetPassword URL with token will be sent to your email.
 - PATCH /updateMe route is used to update user name, email and avatar.
 - PATCH /deleteMe route is only change account to inactive account.
 - Only admin have right to truly delete account.
