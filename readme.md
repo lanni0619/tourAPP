@@ -17,11 +17,6 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/docs/)
 [![Pug](https://img.shields.io/badge/Pug-FFF?style=for-the-badge&logo=pug&logoColor=A86454)](https://pugjs.org/api/getting-started.html)
 
-- Node.js: Single-thread which perfect for building fast & scalable data-intensive apps.
-- Express: Use it for web frameworks to avoid reinventing the wheel.
-- MongoDB: To modeling both normalization & denormalization data.
-- PUG: It's default template engine of Express with simplified syntax.
-
 ## Dependencies
 
 [![@stripe/stripe-js](https://img.shields.io/badge/@stripe/stripe--js-%5E4.4.0-blue)](https://stripe.com/docs/js)
