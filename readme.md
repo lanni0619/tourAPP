@@ -8,7 +8,7 @@
 - [Dependencies](#Dependencies)
 - [Website Guideline](#Website-Guideline)
 - [API Guideline](#API-Guideline)
-- [Codebase Architecture](#Codebase-Architecture)
+- [Architecture](#Architecture)
 
 ## Tech Stack
 
@@ -58,8 +58,12 @@
 - Signup, Login & Logout are available.
 - Update your account information.
 - Booking and reviewing a tour.
-- Using fake credit card number to book (4242 4242 4242 4242 | Expired date, CVS & name are not specified)
-- Broswe your booked tours & reviews in profile.
+- Using test credit card to book
+  - Number: 4242 4242 4242 4242
+  - Expired date: not specified
+  - CVS: not specified
+  - Name: not specified
+- Browse your booked tours & reviews in profile.
 - Test account
   | role| email | password |
   | ---------- | ------------------ | -------- |
@@ -68,16 +72,7 @@
 
 ## API Guideline
 
-**Account permissions**
-
-| role       | tour | user | review | booking |
-| ---------- | ---- | ---- | ------ | ------- |
-| none       | ✔️   | ❌   | ❌     | ❌      |
-| user       | ✔️   | ❌   | ✔️     | ❌      |
-| lead-guide | ✔️   | ❌   | ❌     | ✔️      |
-| admin      | ✔️   | ✔️   | ✔️     | ✔️      |
-
-**API function**
+**Description**
 
 <ul>
   <li>Login account before accessing.</li>
@@ -92,10 +87,17 @@
   <li>More information in <a href="https://documenter.getpostman.com/view/36501836/2sA3s4jq31">POSTMAN Document</a></li>
 </ul>
 
-## Codebase architecture
+**Account permission**
+
+| role/data  | tour | user | review | booking |
+| ---------- | ---- | ---- | ------ | ------- |
+| none       | ⭕   | ❌   | ❌     | ❌      |
+| user       | ⭕   | ❌   | ⭕     | ❌      |
+| lead-guide | ⭕   | ❌   | ❌     | ⭕      |
+| admin      | ⭕   | ⭕   | ⭕     | ⭕      |
+
+## Architecture
 
 <img src="https://i.imgur.com/0yhmQE0.jpeg" alt="backend-architecture" style="width:500px; border-radius:1rem"/>
 
-Description about architecture [imgur](https://i.imgur.com/8iDdbjb.jpeg)
-
-More detail about routes & controller [imgur](https://i.imgur.com/ddQpDGY.jpeg)
+More detail about architecture, route & controller in [Google Slides](https://docs.google.com/presentation/d/1vbWrbmMSBvz7IPGzZsJV-0RqM1A33D0N/edit?usp=sharing&ouid=106614175441136000865&rtpof=true&sd=true)
