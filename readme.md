@@ -8,25 +8,20 @@
 - [Dependencies](#Dependencies)
 - [Website Guideline](#Website-Guideline)
 - [API Guideline](#API-Guideline)
-- [Technological Detail](#Technological-Detail)
-  - [Code Architecture](#Code-Architecture)
-  - [View Route](#View-Route)
-  - [Tour Route](#Tour-Route)
-  - [Review Route](#Review-Route)
-  - [User Route](#User-Route)
+- [Codebase Architecture](#Codebase-Architecture)
 
 ## Tech Stack
 
-- For the servers runtime environment  
+- For the server runtime environment  
   [![Node](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/docs/latest/api/)
 
 - For the web framework  
   [![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)
 
-- For the NOSQL database  
+- To modeling normalization & denormalization data
   [![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/docs/)
 
-- For the server site rendering  
+- For the server site rendering
   [![Pug](https://img.shields.io/badge/Pug-FFF?style=for-the-badge&logo=pug&logoColor=A86454)](https://pugjs.org/api/getting-started.html)
 
 ## Dependencies
@@ -60,98 +55,47 @@
 
 ## Website Guideline
 
-**Signup an account if this's your first time here.**<br><br>
-**In the Profile, you can do something like:**
-
-1. Update your email, password & photo
-2. Find all your booked tours.
-3. Find all reviews you leave and edit/delete it if you want.
-
-**In each tour detail page, you can:**
-
-1. Find more information about this tour.
-2. Find landmarks on the map for your daily itinerary.
-3. Find all reviews in relation to this tour.
-4. Book a tour (The button located at the bottom of page)
-5. Enter a fake credit card number to book (4242 4242 4242 4242 | Expired date, CVS & name are not specified)
-6. Leave a comment. Booking button will be replaced with review form if you have booked.<br>
-
-**Other features must use API function such as POST tour, forgetPassword & resetPassword ...etc**<br>
-
-**Test account**
-
-- Lead-guide account (email: aarav@example.com, password: test1234) which is authorized to post tour by API.
+- Signup, Login & Logout are available.
+- Update your account information.
+- Booking and reviewing a tour.
+- Using fake credit card number to book (4242 4242 4242 4242 | Expired date, CVS & name are not specified)
+- Broswe your booked tours & reviews in profile.
+- Test account
+  | role| email | password |
+  | ---------- | ------------------ | -------- |
+  | user | loulou@example.com | test1234 |
+  | lead-guide | steve@example.com | test1234 |
 
 ## API Guideline
 
-**You can find all available API function & description in the [POSTMAN Document](https://documenter.getpostman.com/view/36501836/2sA3s4jq31).**
+**Account permissions**
 
-**Auth API**
+| role       | tour | user | review | booking |
+| ---------- | ---- | ---- | ------ | ------- |
+| none       | ✔️   | ❌   | ❌     | ❌      |
+| user       | ✔️   | ❌   | ✔️     | ❌      |
+| lead-guide | ✔️   | ❌   | ❌     | ✔️      |
+| admin      | ✔️   | ✔️   | ✔️     | ✔️      |
 
-- Please use "GET /login" API to get token before accessing data.
-- Use GET "/forgetPassword" API to get resetPassword URL if you forgot your password.
-- The resetPassword URL will be sent to your email which you registered with.
-- The resetPassword URL will expire in 10 minutes.
+**API function**
 
-**Data API**
+<ul>
+  <li>Login account before accessing.</li>
+  <li>Forgot & reset password functions are available.</li>
+  <li>CRUD data</li>
+  <li>Get statistic data</li>
+  <ul>
+    <li>/tours/tour-stats</li>
+    <li>/tours/top-5-ratings</li>
+    <li>/tours/monthly-plan/:year</li>
+  </ul>
+  <li>More information in <a href="https://documenter.getpostman.com/view/36501836/2sA3s4jq31">POSTMAN Document</a></li>
+</ul>
 
-- We have 4 type of data which you can access by API.
-- Tour data is opened to all users no need to login.
-- Review data are only for "user" & "admin" account.
-- Booking data are only for "lead-guide" & "admin" acount.
-- User data are only for "admin" account.
-
-## Technological Detail
-
-### Code Architecture
+## Codebase architecture
 
 <img src="https://i.imgur.com/0yhmQE0.jpeg" alt="backend-architecture" style="width:500px; border-radius:1rem"/>
 
-- Using MVC architecture
-- Separating routers and controllers to keep the codebase organized, maintainable, and scalable.
-- In controller, it's only concern about application's implementation:
-  - Managing requests and responses.
-  - About app's more technical aspects.
-  - Bridge between model and view layers.
-- The model which acutally solves the business problem:
-  - Create a tours in database.
-  - Checking if user's password is correct.
-  - Validating user input data.
-  - Ensuring only users who bought tour can review it.
+Description about architecture [imgur](https://i.imgur.com/8iDdbjb.jpeg)
 
-### View Route
-
-<img src="https://i.imgur.com/N1pLRR5.jpeg" alt="view-route" style="width:500px; border-radius:1rem"/>
-
-- All data used to displayed with the front-end are processed in view routes
-- The "isLoggedIn" middleware is only used to detect login or not.
-- Those route protected by protect middleware (JWT) should login before accessing.
-
-### Tour Route
-
-<img src="https://i.imgur.com/a0wv5ka.jpeg" alt="tour-route" style="width:500px; border-radius:1rem"/>
-
-- This route contain basic CRUD operation, statistic and geospatial query api.
-- CRUD is comply with RESTful architecture.
-- Statistic data API are built by mongodb aggregation pipeline.
-
-### Review Route
-
-<img src="https://i.imgur.com/c2m3cfP.jpeg" alt="tour-route" style="width:500px; border-radius:1rem"/>
-
-- This route is about operation of creating, reading, updating & deleting review data.
-- CRUD is comply with RESTful architecture.
-- Review Route are protected by JWT and must login before accessing.
-- POST, PATCH & DELETE operations are restrict to specified user & admin.
-- Booking Route is similar with review route so that not shown here.
-
-### User Route
-
-<img src="https://i.imgur.com/fCJt78l.jpeg" alt="user-route" style="width:500px; border-radius:1rem"/>
-
-- CRUD operation is similar with other route so that not shown here.
-- Only admin have right to CRUD user data.
-- When hitting the POST /forgotPassword route, the resetPassword URL with token will be sent to your email.
-- PATCH /updateMe route is used to update user name, email and avatar.
-- PATCH /deleteMe route is only change account to inactive account.
-- Only admin have right to truly delete account.
+More detail about routes & controller [imgur](https://i.imgur.com/ddQpDGY.jpeg)
