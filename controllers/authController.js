@@ -8,6 +8,7 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Email = require('../utils/email');
+const redisClient = require('../utils/redis');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -16,10 +17,8 @@ const signToken = (id) => {
 };
 
 // Controller
-
 const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
-
   const cookiesOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIES_EXPIRES * 24 * 60 * 60 * 1000,
@@ -27,9 +26,11 @@ const createSendToken = (user, statusCode, req, res) => {
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     httpOnly: true,
   };
-
+  // 1) cookie
   res.cookie('jwt', token, cookiesOptions);
-
+  // 2) Redis whitelist
+  redisClient.setEx(token, process.env.REDIS_DEFAULT_EXPIRATION, `${user._id}`);
+  // 3) API
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -81,18 +82,21 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting JWT and check of it's there.
   let token;
 
-  // token from header (Postman)
+  // 1-1) token from header (Postman)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
   } else if (req.cookies.jwt) {
-    // token from cookies (Browser)
+    // 1-2) token from cookies (Browser)
     token = req.cookies.jwt;
   }
 
-  if (!token) {
+  // 1-3) Check redis whitelist
+  const checkRedis = await redisClient.get(token);
+
+  if (!token || !checkRedis) {
     return next(
       new AppError('You are not logged in. Please login to get access!', 401),
     );
@@ -127,6 +131,22 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
+  // 1) Getting JWT and check of it's there.
+  let token;
+
+  // 1-1) token from header (Postman)
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    // 1-2) token from cookies (Browser)
+    token = req.cookies.jwt;
+  }
+
+  redisClient.del(token);
+
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 1 * 1000),
     httpOnly: true,
