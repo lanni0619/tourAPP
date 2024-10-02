@@ -21,7 +21,9 @@ const errorController = require('./controllers/errorController');
 
 const app = express();
 
-app.enable('trust proxy');
+if (process.env.NODE_ENV === 'production') {
+  app.enable('trust proxy');
+}
 
 // Setting of views engine
 app.set('view engine', 'pug');
