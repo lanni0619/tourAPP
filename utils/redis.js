@@ -11,6 +11,6 @@ const redisClient = Redis.createClient({
 redisClient
   .connect()
   .then(() => console.log(`Redis running on: ${process.env.REDIS_HOST}`))
-  .catch((err) => console.log(err));
+  .catch((err) => console.log('Connecting Error💥', err));
 
 module.exports = redisClient;
