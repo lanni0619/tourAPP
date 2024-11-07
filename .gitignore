@@ -6,3 +6,12 @@ test.js
 .eslintrc.json
 .prettierrc
 dev-data
+
+# AWS
+ec2-webapp.pem
+webserver.pem
+
+# docker
+# docker-compose.yaml
+# dockerfile
+# .dockerignore

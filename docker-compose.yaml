@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: ./
+    ports:
+      - '80:80'
+    env_file:
+      - ./config.env
+    volumes:
+      - img:/app/public/img
+      - ./:/app
+      - /app/node_modules
+volumes:
+  img:
