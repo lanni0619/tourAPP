@@ -16,6 +16,8 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+
+// Error handling
 const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
 
@@ -86,10 +88,7 @@ app.use(compression());
 
 // Self-define middleware
 app.use((req, res, next) => {
-  // define a requestTime Object
   req.requestTime = new Date().toISOString();
-  // console.log(req.header);
-  // console.log(req.cookies);
   next();
 });
 

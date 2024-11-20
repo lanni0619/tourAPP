@@ -62,7 +62,7 @@ Deployment URL 🥾: https://wang-bookingtour.com
 
 | role/data  | tour | user | review | booking |
 | ---------- | ---- | ---- | ------ | ------- |
-| none       | ⭕   | ❌   | ❌     | ❌      |
+| guest      | ⭕   | ❌   | ❌     | ❌      |
 | user       | ⭕   | ❌   | ⭕     | ❌      |
 | lead-guide | ⭕   | ❌   | ❌     | ⭕      |
 | admin      | ⭕   | ⭕   | ⭕     | ⭕      |

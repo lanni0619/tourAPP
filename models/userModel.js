@@ -58,7 +58,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// middleware
+// ==================== middleware
+// hash password
 userSchema.pre('save', async function (next) {
   // Only run bcrypt if password is modify
   if (!this.isModified('password')) return next();
@@ -68,18 +69,22 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+// Updating password changed time
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now();
   next();
 });
+
+// Filtering out inactive account
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });
 
-// instance
+// ==================== instance
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword,

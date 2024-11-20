@@ -20,7 +20,8 @@ const DB_URL = process.env.DATABASE_URL.replace(
 );
 mongoose
   .connect(DB_URL)
-  .then(() => console.log('DB connection successful (MongoDB Atlas Database)'));
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.log('Something went wrong with DB'));
 
 // Server
 const port = process.env.PORT || 8000;
