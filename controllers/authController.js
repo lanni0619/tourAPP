@@ -10,35 +10,50 @@ const AppError = require('../utils/appError');
 const Email = require('../utils/email');
 const redisClient = require('../utils/redis');
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+const genAccessToken = (id) => {
+  return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: '15m',
   });
 };
 
-// Controller
+const genRefreshToken = (id) => {
+  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: '7d',
+  });
+};
+
 const createSendToken = (user, statusCode, req, res) => {
-  const token = signToken(user._id);
+  const accessToken = genAccessToken(user._id);
+  const refreshToken = genRefreshToken(user._id);
+
   const cookiesOptions = {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIES_EXPIRES * 24 * 60 * 60 * 1000,
+      Date.now() + process.env.JWT_COOKIES_EXPIRES * 7 * 24 * 60 * 60 * 1000,
     ),
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     httpOnly: true,
   };
+
   // 1) cookie
-  res.cookie('jwt', token, cookiesOptions);
+  res.cookie('jwt', refreshToken, cookiesOptions);
+
   // 2) Redis whitelist
-  redisClient.setEx(token, process.env.REDIS_DEFAULT_EXPIRATION, `${user._id}`);
-  // 3) API
+  const expTime = 7 * 24 * 60 * 60;
+  redisClient.setEx(refreshToken, expTime, `${user._id}`, (err) => {
+    return next(new AppError('Interval error, try again later', 500));
+  });
+
+  // 3) Response to API
   res.status(statusCode).json({
     status: 'success',
-    token,
+    token: accessToken,
     data: {
       user,
     },
   });
 };
+
+// ==================== Endpoint
 
 exports.signup = catchAsync(async (req, res, next) => {
   // Security flaw, don't use => const newUser = await User.create(req.body);
@@ -80,39 +95,31 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting JWT and check of it's there.
-  let token;
+  let accessToken = req.headers.authorization.split(' ')[1];
 
-  // 1-1) token from header (Postman)
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    // 1-2) token from cookies (Browser)
-    token = req.cookies.jwt;
-  }
-
-  // 1-3) Check redis whitelist
-  const checkRedis = await redisClient.get(token);
-
-  if (!token || !checkRedis) {
+  if (!accessToken) {
     return next(
       new AppError('You are not logged in. Please login to get access!', 401),
     );
   }
 
-  // 2) verification token
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  // 2) verification accessToken
+  const decoded = await promisify(jwt.verify)(
+    accessToken,
+    process.env.ACCESS_TOKEN_SECRET,
+  );
 
   // 3) check if user still exists
   const currentUser = await User.findById(decoded.id);
   if (!currentUser)
     return next(
-      new AppError('The user belongs to this token does no longer exist.', 401),
+      new AppError(
+        'The user belongs to this accessToken does no longer exist.',
+        401,
+      ),
     );
 
-  // 4) Check if user changed password after the token was issued
+  // 4) Check if user changed password after the accessToken was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError(
@@ -130,29 +137,75 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.logout = (req, res) => {
+exports.protectByRT = catchAsync(async (req, res, next) => {
   // 1) Getting JWT and check of it's there.
-  let token;
+  let refreshToken;
+  if (req.cookies.jwt) refreshToken = req.cookies.jwt;
+
+  // 1-3) Check redis whitelist
+  const userID = await redisClient.get(refreshToken);
+
+  if (!refreshToken || !userID) {
+    return next(
+      new AppError('You are not logged in. Please login to get access!', 401),
+    );
+  }
+
+  // 2) verification accessToken
+  const decoded = await promisify(jwt.verify)(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+  );
+
+  // 3) check if user still exists
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser)
+    return next(
+      new AppError('The user belongs to this Token does no longer exist.', 401),
+    );
+
+  // 4) Check if user changed password after the accessToken was issued
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError(
+        'User recently changed the password. Please login again!',
+        401,
+      ),
+    );
+  }
+  // Grant access to protected routes
+  req.user = currentUser;
+
+  // If there is a logged in user, put currentUser at "res.locals" then pug template could access.
+  res.locals.user = currentUser;
+
+  next();
+});
+
+exports.logout = catchAsync(async (req, res) => {
+  // 1) Getting JWT and check of it's there.
+  let accessToken;
+  let refreshToken;
 
   // 1-1) token from header (Postman)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    token = req.headers.authorization.split(' ')[1];
+    accessToken = req.headers.authorization.split(' ')[1];
   } else if (req.cookies.jwt) {
     // 1-2) token from cookies (Browser)
-    token = req.cookies.jwt;
+    refreshToken = req.cookies.jwt;
   }
 
-  redisClient.del(token);
+  await redisClient.del(refreshToken);
 
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 1 * 1000),
     httpOnly: true,
   });
   res.status(200).json({ status: 'success' });
-};
+});
 
 // Only for rendered pages (viewRoute), no errors!
 exports.isLoggedIn = async (req, res, next) => {
@@ -161,7 +214,7 @@ exports.isLoggedIn = async (req, res, next) => {
       // 1) Verify the token from cookies
       const decoded = await promisify(jwt.verify)(
         req.cookies.jwt,
-        process.env.JWT_SECRET,
+        process.env.REFRESH_TOKEN_SECRET,
       );
       // 2) check if user still exists
       const currentUser = await User.findById(decoded.id);
@@ -278,4 +331,26 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   // 4) log user in, send JWT
   createSendToken(user, 200, req, res);
+});
+
+exports.refreshToken = catchAsync(async (req, res, next) => {
+  // 1) Get token from cookie
+  const refreshToken = req.cookies.jwt;
+  if (!refreshToken) return next(new AppError('Refresh token required', 401));
+
+  // 2) Check whitelist
+  const userID = await redisClient.get(refreshToken);
+  if (!refreshToken || !userID) {
+    return next(
+      new AppError('You are not logged in. Please login to get access!', 401),
+    );
+  }
+
+  // 3) Generate and send Access Token
+  const accessToken = genAccessToken(userID);
+
+  res.status(200).json({
+    status: 'success',
+    token: accessToken,
+  });
 });

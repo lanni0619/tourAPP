@@ -14,13 +14,17 @@ router.get(
 router.get('/tour/:slug', authController.isLoggedIn, viewController.getTour);
 router.get('/login', authController.isLoggedIn, viewController.getLoginForm);
 router.get('/signup', authController.isLoggedIn, viewController.getSignupForm);
-router.get('/me', authController.protect, viewController.getAccount);
+router.get('/me', authController.protectByRT, viewController.getAccount);
 router.get(
   '/my-bookings',
-  authController.protect,
+  authController.protectByRT,
   viewController.getMyBookings,
 );
-router.get('/my-reviews', authController.protect, viewController.getMyReviews);
+router.get(
+  '/my-reviews',
+  authController.protectByRT,
+  viewController.getMyReviews,
+);
 
 // router.post(
 //   '/submit-user-data',
