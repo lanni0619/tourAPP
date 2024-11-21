@@ -4,18 +4,16 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-// A special endpoint doesn't fit RESTful
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
+
 // Password Reset Functionality
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
-router.get('/token', authController.refreshToken);
 
-// Middleware: Protect all of route after it.
-router.use(authController.protect);
-
+// ==================== API For user
+router.use(authController.protectByRefresh);
 router.patch('/updateMyPassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
 router.patch(
@@ -25,11 +23,11 @@ router.patch(
   userController.updateMe,
 );
 router.delete('/deleteMe', userController.deleteMe);
+router.get('/token', authController.getAccessToken);
 
-// Middleware: Protect all of route after it.
+// ==================== API For Admin
 router.use(authController.restrictTo('admin'));
-
-// Fit RESTful philosophy
+router.use(authController.protectByAccess);
 router
   .route('/')
   .get(userController.getAllUsers)

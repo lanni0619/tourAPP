@@ -11,11 +11,9 @@ router
   .get(tourController.top5Ratings, tourController.getAllTours);
 
 router.route('/tour-stats').get(tourController.getTourStats);
-router.route('/monthly-plan/:year').get(
-  authController.protect,
-  // authController.restrictTo('admin', 'lead-guide', 'guide'),
-  tourController.getTop3busyMonth,
-);
+router
+  .route('/monthly-plan/:year')
+  .get(authController.protectByAccess, tourController.getTop3busyMonth);
 
 // 2) Geospatial Query - Finding Tours within Radius
 router
@@ -29,22 +27,23 @@ router
   .route('/')
   .get(tourController.getAllTours)
   .post(
-    authController.protect,
+    authController.protectByAccess,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.createTour,
   );
+
 router
   .route('/:id')
   .get(tourController.getTour)
   .patch(
-    authController.protect,
+    authController.protectByAccess,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.uploadTourImages,
     tourController.resizeTourImages,
     tourController.updateTour,
   )
   .delete(
-    authController.protect,
+    authController.protectByAccess,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour,
   );

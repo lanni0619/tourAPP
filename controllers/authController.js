@@ -10,6 +10,7 @@ const AppError = require('../utils/appError');
 const Email = require('../utils/email');
 const redisClient = require('../utils/redis');
 
+// ==================== JWT Function
 const genAccessToken = (id) => {
   return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: '15m',
@@ -27,9 +28,7 @@ const createSendToken = (user, statusCode, req, res) => {
   const refreshToken = genRefreshToken(user._id);
 
   const cookiesOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIES_EXPIRES * 7 * 24 * 60 * 60 * 1000,
-    ),
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     httpOnly: true,
   };
@@ -54,7 +53,6 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 // ==================== Endpoint
-
 exports.signup = catchAsync(async (req, res, next) => {
   // Security flaw, don't use => const newUser = await User.create(req.body);
   const { name, email, password, passwordConfirm, role } = req.body;
@@ -76,6 +74,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
+  console.log(req.body);
 
   // 1) check if email & password is exist
   if (!email || !password)
@@ -93,17 +92,17 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, req, res);
 });
 
-exports.protect = catchAsync(async (req, res, next) => {
+exports.protectByAccess = catchAsync(async (req, res, next) => {
   // 1) Getting JWT and check of it's there.
-  let accessToken = req.headers.authorization.split(' ')[1];
-
+  let accessToken;
+  if (req.headers.authorization)
+    accessToken = req.headers.authorization.split(' ')[1];
   if (!accessToken) {
-    return next(
-      new AppError('You are not logged in. Please login to get access!', 401),
-    );
+    return next(new AppError('AccessToken is empty!', 401));
   }
 
   // 2) verification accessToken
+  // jwt expired => catchAsync => errorController
   const decoded = await promisify(jwt.verify)(
     accessToken,
     process.env.ACCESS_TOKEN_SECRET,
@@ -111,13 +110,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 3) check if user still exists
   const currentUser = await User.findById(decoded.id);
-  if (!currentUser)
-    return next(
-      new AppError(
-        'The user belongs to this accessToken does no longer exist.',
-        401,
-      ),
-    );
+  if (!currentUser) return next(new AppError('AccessToken is invalid.', 401));
 
   // 4) Check if user changed password after the accessToken was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
@@ -137,34 +130,28 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.protectByRT = catchAsync(async (req, res, next) => {
-  // 1) Getting JWT and check of it's there.
+exports.protectByRefresh = catchAsync(async (req, res, next) => {
+  // 1) Getting JWT
   let refreshToken;
   if (req.cookies.jwt) refreshToken = req.cookies.jwt;
 
-  // 1-3) Check redis whitelist
+  // 2) Check whitelist
   const userID = await redisClient.get(refreshToken);
-
   if (!refreshToken || !userID) {
-    return next(
-      new AppError('You are not logged in. Please login to get access!', 401),
-    );
+    return next(new AppError('Please login to get access!', 401));
   }
 
-  // 2) verification accessToken
+  // 3) verification accessToken
   const decoded = await promisify(jwt.verify)(
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
   );
 
-  // 3) check if user still exists
+  // 4) check if user still exists
   const currentUser = await User.findById(decoded.id);
-  if (!currentUser)
-    return next(
-      new AppError('The user belongs to this Token does no longer exist.', 401),
-    );
+  if (!currentUser) return next(new AppError('User is not found.', 401));
 
-  // 4) Check if user changed password after the accessToken was issued
+  // 5) Check if user changed password after the accessToken was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError(
@@ -211,15 +198,19 @@ exports.logout = catchAsync(async (req, res) => {
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
-      // 1) Verify the token from cookies
+      // 1) Check whitelist
+      const userID = await redisClient.get(req.cookies.jwt);
+      if (!userID) return next();
+
+      // 2) Verify the token from cookies
       const decoded = await promisify(jwt.verify)(
         req.cookies.jwt,
         process.env.REFRESH_TOKEN_SECRET,
       );
-      // 2) check if user still exists
+      // 3) check if user still exists
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) return next();
-      //   // 3) Check if user changed password after the token was issued
+      // 4) Check if user changed password after the token was issued
       if (currentUser.changedPasswordAfter(decoded.iat)) {
         return next();
       }
@@ -333,21 +324,8 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, req, res);
 });
 
-exports.refreshToken = catchAsync(async (req, res, next) => {
-  // 1) Get token from cookie
-  const refreshToken = req.cookies.jwt;
-  if (!refreshToken) return next(new AppError('Refresh token required', 401));
-
-  // 2) Check whitelist
-  const userID = await redisClient.get(refreshToken);
-  if (!refreshToken || !userID) {
-    return next(
-      new AppError('You are not logged in. Please login to get access!', 401),
-    );
-  }
-
-  // 3) Generate and send Access Token
-  const accessToken = genAccessToken(userID);
+exports.getAccessToken = catchAsync(async (req, res, next) => {
+  const accessToken = genAccessToken(req.user._id);
 
   res.status(200).json({
     status: 'success',
