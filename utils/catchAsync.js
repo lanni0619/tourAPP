@@ -2,10 +2,9 @@
 // use a anonymous function to wrap async function
 
 module.exports = (fn) => {
-  // 2) return a async function - give fn (req, res, next) to use
+  // 1) Express pass (req, res, next) to wrapper function automatically
   return (req, res, next) => {
-    // 1) catch error here so we can get rid of try-catch block
-    // (err) => next(err) simplify to next
+    // 2) Pass (req, res, next) to fn
     fn(req, res, next).catch(next);
   };
 };

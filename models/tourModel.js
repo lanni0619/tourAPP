@@ -192,7 +192,7 @@ tourSchema.post(/^find/, function (docs, next) {
   next();
 });
 
-// C3) Aggregation Middleware
+// C5) Aggregation Middleware
 // this point to current aggregation Object
 // It's will affect pipeline when call $geoNear
 
