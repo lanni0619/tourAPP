@@ -97,7 +97,12 @@ exports.protectByAccess = catchAsync(async (req, res, next) => {
   if (req.headers.authorization)
     accessToken = req.headers.authorization.split(' ')[1];
   if (!accessToken) {
-    return next(new AppError('AccessToken is empty!', 401));
+    return next(
+      new AppError(
+        'Access token is empty! Please hit /api/v1/users/token endpoint first',
+        401,
+      ),
+    );
   }
 
   // 2) verification accessToken
@@ -133,6 +138,11 @@ exports.protectByRefresh = catchAsync(async (req, res, next) => {
   // 1) Getting JWT
   let refreshToken;
   if (req.cookies.jwt) refreshToken = req.cookies.jwt;
+  if (!refreshToken) {
+    return next(
+      new AppError('Refresh token is empty! Please login first', 401),
+    );
+  }
 
   // 2) Check whitelist
   const userID = await redisClient.get(refreshToken);
@@ -230,7 +240,7 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     // if user's role = user
-    if (!roles.includes(req.user.role)) {
+    if (!req.user || !roles.includes(req.user.role)) {
       return next(
         // 403 stand for forbidden
         new AppError('You do not have permission to perform this action', 403),

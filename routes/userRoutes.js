@@ -13,6 +13,7 @@ router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
 // ==================== API For user
+// Protect by Refresh token
 router.use(authController.protectByRefresh);
 router.patch('/updateMyPassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
@@ -25,9 +26,10 @@ router.patch(
 router.delete('/deleteMe', userController.deleteMe);
 router.get('/token', authController.getAccessToken);
 
-// ==================== API For Admin
-router.use(authController.restrictTo('admin'));
+// ==================== API For
+// Protect by access token
 router.use(authController.protectByAccess);
+router.use(authController.restrictTo('admin'));
 router
   .route('/')
   .get(userController.getAllUsers)
