@@ -7,6 +7,7 @@ const factory = require('./handlerFactory');
 
 const multerStorage = multer.memoryStorage();
 
+// ==================== Middleware
 // multer option: filter
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
@@ -70,6 +71,8 @@ exports.top5Ratings = (req, res, next) => {
   next();
 };
 
+// ==================== Endpoint
+
 exports.getAllTours = factory.getAll(Tour);
 exports.getTour = factory.getOne(Tour, {
   path: 'reviews',
@@ -79,35 +82,9 @@ exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
-// ==================== Statistic data
-
 // Group by difficulty
-exports.getTourStats = catchAsync(async (req, res, next) => {
-  const stats = await Tour.aggregate([
-    {
-      // group stage
-      $group: {
-        // _id is used to classify data. null means all data
-        // fieldName: { operator: '$fieldName' }
-        _id: { $toUpper: '$difficulty' },
-        numTours: { $sum: 1 },
-        tours: { $push: '$name' },
-        numRating: { $sum: '$ratingsQuantity' },
-        avgRating: { $avg: '$ratingsAverage' },
-      },
-    },
-    {
-      $project: {
-        numTours: true,
-        tours: true,
-        numRating: true,
-        avgRating: { $round: ['$avgRating', 1] },
-      },
-    },
-    {
-      $sort: { numRating: -1 },
-    },
-  ]);
+exports.groupByDifficulty = catchAsync(async (req, res, next) => {
+  const stats = await Tour.groupByDifficulty();
   res.status(200).json({
     status: 'success',
     data: {
@@ -120,40 +97,7 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
 exports.getTop3busyMonth = catchAsync(async (req, res, next) => {
   // 2021
   const year = req.params.year * 1;
-
-  const plan = await Tour.aggregate([
-    {
-      // Deconstructs an array field from the input documents to output a document for each element.
-      $unwind: '$startDates',
-    },
-    {
-      $match: {
-        startDates: {
-          $gte: new Date(`${year}-01-01`),
-          $lte: new Date(`${year}-12-31`),
-        },
-      },
-    },
-    {
-      $group: {
-        _id: { $month: '$startDates' },
-        numTourStarts: { $sum: 1 },
-        tour: { $push: '$name' },
-      },
-    },
-    {
-      $addFields: { month: '$_id' },
-    },
-    {
-      $project: { _id: 0 },
-    },
-    {
-      $sort: { numTourStarts: -1 },
-    },
-    {
-      $limit: 3,
-    },
-  ]);
+  const plan = await Tour.getTop3busyMonth(year);
   res.status(200).json({
     status: 'success',
     result: plan.length,
@@ -165,25 +109,7 @@ exports.getTop3busyMonth = catchAsync(async (req, res, next) => {
 
 // Price Bucket
 exports.getPriceBucket = catchAsync(async (req, res, next) => {
-  const result = await Tour.aggregate([
-    {
-      $bucket: {
-        groupBy: '$price',
-        boundaries: [0, 500, 1000, 1500, 2000],
-        default: '2000+',
-        output: {
-          tourCount: { $sum: 1 },
-          tours: {
-            $push: {
-              name: '$name',
-              ratingsAverage: '$ratingsAverage',
-              ratingsQuantity: '$ratingsQuantity',
-            },
-          },
-        },
-      },
-    },
-  ]);
+  const result = await Tour.getPriceBucket();
 
   res.status(200).json({
     status: 'success',
@@ -193,59 +119,18 @@ exports.getPriceBucket = catchAsync(async (req, res, next) => {
 
 // Group by guide
 exports.getGuideLoading = catchAsync(async (req, res, next) => {
-  const stats = await Tour.aggregate([
-    {
-      $unwind: '$guides',
-    },
-    {
-      $lookup: {
-        from: 'users', // 連接的集合
-        localField: 'guides', // reviews.user 存的 user id
-        foreignField: '_id', // users 集合的 id
-        as: 'userDetails',
-      },
-    },
-    { $unwind: '$userDetails' },
-    {
-      $group: {
-        _id: '$userDetails.name',
-        numTour: { $sum: 1 },
-        avgRating: { $avg: '$ratingsAverage' },
-        tours: { $push: '$name' },
-      },
-    },
-    {
-      $set: {
-        avgRating: { $round: ['$avgRating', 3] },
-      },
-    },
-    {
-      $sort: { avgRating: 1 },
-    },
-  ]);
+  const result = await Tour.getGuideLoading();
 
   res.status(200).json({
     status: 'success',
-    data: stats,
+    data: result,
   });
 });
 
 // Geospatial Query
 exports.getToursWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
-  const [lat, lng] = latlng.split(',');
-  if (!lat || !lng)
-    next(
-      new AppError(
-        'Please provide latitude and longitude in the format lat,lng . ',
-        400,
-      ),
-    );
-  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
-  const tours = await Tour.find({
-    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }, // lng first in mongodb
-  });
-
+  const tours = await Tour.getToursWithin(distance, latlng, unit);
   res.status(200).json({
     status: 'success',
     results: tours.length,
@@ -258,33 +143,7 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
 // Get distances
 exports.getDistances = catchAsync(async (req, res, next) => {
   const { latlng, unit } = req.params;
-  const [lat, lng] = latlng.split(',');
-  if (!lat || !lng)
-    next(
-      new AppError(
-        'Please provide latitude and longitude in the format lat,lng . ',
-        400,
-      ),
-    );
-  const multiplier = unit === 'mi' ? 0.000621371192 : 0.001;
-  const distances = await Tour.aggregate([
-    {
-      $geoNear: {
-        near: {
-          type: 'Point',
-          coordinates: [lng * 1, lat * 1],
-        },
-        distanceField: 'distance',
-        distanceMultiplier: multiplier,
-      },
-    },
-    {
-      $project: {
-        distance: 1,
-        name: 1,
-      },
-    },
-  ]);
+  const distances = await Tour.getDistances(latlng, unit);
 
   res.status(200).json({
     status: 'success',

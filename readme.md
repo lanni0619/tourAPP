@@ -50,9 +50,11 @@ Deployment URL 🥾: https://wang-bookingtour.com
   <li>CRUD data</li>
   <li>Get statistic data</li>
     <ul>
-    <li>/tours/tour-stats</li>
+    <li>/tours/group-by-difficulty</li>
     <li>/tours/top-5-ratings</li>
     <li>/tours/monthly-plan/:year</li>
+    <li>price-bucket</li>
+    <li>guide-loading</li>
     </ul>
   <li>Forgot & reset password functions are available.</li>
   <li>More information in <a href="https://documenter.getpostman.com/view/36501836/2sA3s4jq31">POSTMAN Document</a></li>

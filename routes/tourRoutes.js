@@ -10,7 +10,7 @@ router
   .route('/top-5-ratings')
   .get(tourController.top5Ratings, tourController.getAllTours);
 
-router.route('/tour-stats').get(tourController.getTourStats);
+router.route('/group-by-difficulty').get(tourController.groupByDifficulty);
 router.route('/monthly-plan/:year').get(tourController.getTop3busyMonth);
 router.route('/price-bucket').get(tourController.getPriceBucket);
 router.route('/guide-loading').get(tourController.getGuideLoading);

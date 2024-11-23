@@ -196,9 +196,171 @@ tourSchema.post(/^find/, function (docs, next) {
 // https://mongoosejs.com/docs/middleware.html#aggregate
 
 tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
+
+// ==================== Static function
+tourSchema.statics.groupByDifficulty = async () => {
+  return await Tour.aggregate([
+    {
+      // group stage
+      $group: {
+        // _id is used to classify data. null means all data
+        // fieldName: { operator: '$fieldName' }
+        _id: { $toUpper: '$difficulty' },
+        numTours: { $sum: 1 },
+        tours: { $push: '$name' },
+        numRating: { $sum: '$ratingsQuantity' },
+        avgRating: { $avg: '$ratingsAverage' },
+      },
+    },
+    {
+      $project: {
+        numTours: true,
+        tours: true,
+        numRating: true,
+        avgRating: { $round: ['$avgRating', 1] },
+      },
+    },
+    {
+      $sort: { numRating: -1 },
+    },
+  ]);
+};
+
+tourSchema.statics.getTop3busyMonth = async (year) => {
+  return await Tour.aggregate([
+    {
+      // Deconstructs an array field from the input documents to output a document for each element.
+      $unwind: '$startDates',
+    },
+    {
+      $match: {
+        startDates: {
+          $gte: new Date(`${year}-01-01`),
+          $lte: new Date(`${year}-12-31`),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: '$startDates' },
+        numTourStarts: { $sum: 1 },
+        tour: { $push: '$name' },
+      },
+    },
+    {
+      $addFields: { month: '$_id' },
+    },
+    {
+      $project: { _id: 0 },
+    },
+    {
+      $sort: { numTourStarts: -1 },
+    },
+    {
+      $limit: 3,
+    },
+  ]);
+};
+
+tourSchema.statics.getPriceBucket = async () => {
+  return await Tour.aggregate([
+    {
+      $bucket: {
+        groupBy: '$price',
+        boundaries: [0, 500, 1000, 1500, 2000],
+        default: '2000+',
+        output: {
+          tourCount: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
+      },
+    },
+  ]);
+};
+
+tourSchema.statics.getGuideLoading = async () => {
+  return await Tour.aggregate([
+    {
+      $unwind: '$guides',
+    },
+    {
+      $lookup: {
+        from: 'users', // 連接的集合
+        localField: 'guides', // reviews.user 存的 user id
+        foreignField: '_id', // users 集合的 id
+        as: 'userDetails',
+      },
+    },
+    { $unwind: '$userDetails' },
+    {
+      $group: {
+        _id: '$userDetails.name',
+        avgRating: { $avg: '$ratingsAverage' },
+        caseNums: { $sum: 1 },
+        tours: { $push: '$name' },
+      },
+    },
+    {
+      $set: {
+        avgRating: { $round: ['$avgRating', 3] },
+      },
+    },
+    {
+      $sort: { avgRating: 1 },
+    },
+  ]);
+};
+
+tourSchema.statics.getToursWithin = async (distance, latlng, unit) => {
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng)
+    next(
+      new AppError(
+        'Please provide latitude and longitude in the format lat,lng . ',
+        400,
+      ),
+    );
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }, // lng first in mongodb
+  });
+  return tours;
+};
+
+tourSchema.statics.getDistances = async (latlng, unit) => {
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng)
+    next(
+      new AppError(
+        'Please provide latitude and longitude in the format lat,lng . ',
+        400,
+      ),
+    );
+  const multiplier = unit === 'mi' ? 0.000621371192 : 0.001;
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  return distances;
+};
 
 const Tour = mongoose.model('Tour', tourSchema);
 
