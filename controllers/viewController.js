@@ -87,7 +87,6 @@ exports.getMyBookings = catchAsync(async (req, res, next) => {
 
 exports.getMyReviews = catchAsync(async (req, res, next) => {
   // 1) Find reviews by userID
-  console.log(req.user.id);
   const reviews = await Review.find({ user: req.user.id }).populate({
     path: 'tour',
     select: 'name slug',

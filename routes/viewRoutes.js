@@ -4,7 +4,6 @@ const authController = require('../controllers/authController');
 const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
-console.log('API123');
 
 router.get(
   '/',

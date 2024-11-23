@@ -38,7 +38,7 @@ const reviewSchema = new mongoose.Schema(
 
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
-// static function
+// ==================== static function
 reviewSchema.statics.calAvgRatings = async function (tourId) {
   const stats = await this.aggregate([
     {
@@ -59,7 +59,7 @@ reviewSchema.statics.calAvgRatings = async function (tourId) {
   });
 };
 
-// document mddiewares
+// ==================== document mddiewares
 // 1) Prevent duplicated review
 reviewSchema.pre('save', async function (next) {
   const review = await Review.findOne({ user: this.user, tour: this.tour });
@@ -72,12 +72,14 @@ reviewSchema.pre('save', async function (next) {
     );
 });
 // 2) calAvgRatings after saved doc
-reviewSchema.post('save', function () {
+reviewSchema.post('save', function (doc) {
   // Review model is not yet define
-  this.constructor.calAvgRatings(this.tour);
+  console.log(doc);
+  this.constructor.calAvgRatings(doc.tour);
 });
 
-// Query Middlewares - populate user before query
+// ==================== Query Middlewares
+// 1) populate user before query
 reviewSchema.pre(/^find/, function (next) {
   this.sort('-createdAt');
 
@@ -89,9 +91,8 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
-// Query Middlewares - calAvgRatings after update & delete
+// 2) calAvgRatings after update & delete
 reviewSchema.post(/^findOneAnd/, async function (docs) {
-  // console.log({ docs });
   if (docs) docs.constructor.calAvgRatings(docs.tour);
 });
 

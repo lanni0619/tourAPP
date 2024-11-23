@@ -79,30 +79,33 @@ exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
+// ==================== Statistic data
+
+// Group by difficulty
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
-    // {
-    //   $match: { ratingsAverage: { $gte: 4.5 } },
-    // },
     {
       // group stage
       $group: {
         // _id is used to classify data. null means all data
+        // fieldName: { operator: '$fieldName' }
         _id: { $toUpper: '$difficulty' },
         numTours: { $sum: 1 },
+        tours: { $push: '$name' },
         numRating: { $sum: '$ratingsQuantity' },
-        // fieldName: { operator: '$fieldName' }
         avgRating: { $avg: '$ratingsAverage' },
-        avgPrice: { $avg: '$price' },
-        minPrice: { $min: '$price' },
-        maxPrice: { $max: '$price' },
       },
-      // Can only use new field name from the top for next stage
-      // can not sort by collection field name
-      // 1 for ascending
     },
     {
-      $sort: { _id: -1 },
+      $project: {
+        numTours: true,
+        tours: true,
+        numRating: true,
+        avgRating: { $round: ['$avgRating', 1] },
+      },
+    },
+    {
+      $sort: { numRating: -1 },
     },
   ]);
   res.status(200).json({
@@ -112,8 +115,8 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
     },
   });
 });
-// Solve business problem
-// Find the top3 busy month in a specific year
+
+// Top3 busy month in a specific year (Solve business problem)
 exports.getTop3busyMonth = catchAsync(async (req, res, next) => {
   // 2021
   const year = req.params.year * 1;
@@ -157,6 +160,73 @@ exports.getTop3busyMonth = catchAsync(async (req, res, next) => {
     data: {
       plan,
     },
+  });
+});
+
+// Price Bucket
+exports.getPriceBucket = catchAsync(async (req, res, next) => {
+  const result = await Tour.aggregate([
+    {
+      $bucket: {
+        groupBy: '$price',
+        boundaries: [0, 500, 1000, 1500, 2000],
+        default: '2000+',
+        output: {
+          tourCount: { $sum: 1 },
+          tours: {
+            $push: {
+              name: '$name',
+              ratingsAverage: '$ratingsAverage',
+              ratingsQuantity: '$ratingsQuantity',
+            },
+          },
+        },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: result,
+  });
+});
+
+// Group by guide
+exports.getGuideLoading = catchAsync(async (req, res, next) => {
+  const stats = await Tour.aggregate([
+    {
+      $unwind: '$guides',
+    },
+    {
+      $lookup: {
+        from: 'users', // 連接的集合
+        localField: 'guides', // reviews.user 存的 user id
+        foreignField: '_id', // users 集合的 id
+        as: 'userDetails',
+      },
+    },
+    { $unwind: '$userDetails' },
+    {
+      $group: {
+        _id: '$userDetails.name',
+        numTour: { $sum: 1 },
+        avgRating: { $avg: '$ratingsAverage' },
+        tours: { $push: '$name' },
+      },
+    },
+    {
+      $set: {
+        avgRating: { $round: ['$avgRating', 3] },
+      },
+    },
+    {
+      $sort: { avgRating: 1 },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: stats,
   });
 });
 

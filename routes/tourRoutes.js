@@ -11,9 +11,9 @@ router
   .get(tourController.top5Ratings, tourController.getAllTours);
 
 router.route('/tour-stats').get(tourController.getTourStats);
-router
-  .route('/monthly-plan/:year')
-  .get(authController.protectByAccess, tourController.getTop3busyMonth);
+router.route('/monthly-plan/:year').get(tourController.getTop3busyMonth);
+router.route('/price-bucket').get(tourController.getPriceBucket);
+router.route('/guide-loading').get(tourController.getGuideLoading);
 
 // 2) Geospatial Query - Finding Tours within Radius
 router
