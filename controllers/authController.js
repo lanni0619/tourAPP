@@ -8,7 +8,7 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Email = require('../utils/email');
-const redisClient = require('../utils/redis');
+const redisClient = require('../utils/redisClient');
 
 // ==================== JWT Function
 const genAccessToken = (id) => {

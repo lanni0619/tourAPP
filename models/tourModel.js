@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const cacheStrategy = require('../utils/cacheStrategy');
+
 // const validator = require('validator');
 // const User = require('./userModel');
 
@@ -165,29 +167,29 @@ tourSchema.pre('save', function (next) {
 // });
 
 // Document Middleware
-tourSchema.post('save', function (doc, next) {
-  // do something after document be saved
+tourSchema.post('save', async function (doc, next) {
+  // When tour is added, clear statistic cache
+  await cacheStrategy.clearGetTop3busyMonth();
   next();
 });
 
 // Query Middleware
 tourSchema.pre(/^find/, function (next) {
-  this.find({ secretTour: { $ne: true } });
-  this.startTime = Date.now();
+  // 1) Filter out secretTour
+  // Post findOneAnd can not be trigged if call this.find
+  // this.find({ secretTour: { $ne: true } });
 
-  // Populate guides fields with all kind of "find" query method
+  // 2) Populate guides fields
   this.populate({
     path: 'guides',
     select: '-passwordChangedAt -__v',
   });
-
   next();
 });
 
-// Calculate how much query time costed
-tourSchema.post(/^find/, function (docs, next) {
-  // console.log(`Query took ${Date.now() - this.startTime} milliseconds!`);
-  next();
+tourSchema.post(/^findOneAnd/, async function () {
+  // When tour is updated or deleted, clear statistic cache
+  await cacheStrategy.clearGetTop3busyMonth();
 });
 
 // Aggregation Middleware
@@ -201,8 +203,8 @@ tourSchema.pre('aggregate', function (next) {
 });
 
 // ==================== Static function
-tourSchema.statics.groupByDifficulty = async () => {
-  return await Tour.aggregate([
+tourSchema.statics.groupByDifficulty = async function () {
+  return await this.aggregate([
     {
       // group stage
       $group: {
@@ -229,8 +231,8 @@ tourSchema.statics.groupByDifficulty = async () => {
   ]);
 };
 
-tourSchema.statics.getTop3busyMonth = async (year) => {
-  return await Tour.aggregate([
+tourSchema.statics.getTop3busyMonth = async function (year) {
+  return await this.aggregate([
     {
       // Deconstructs an array field from the input documents to output a document for each element.
       $unwind: '$startDates',
@@ -246,18 +248,12 @@ tourSchema.statics.getTop3busyMonth = async (year) => {
     {
       $group: {
         _id: { $month: '$startDates' },
-        numTourStarts: { $sum: 1 },
+        numTour: { $sum: 1 },
         tour: { $push: '$name' },
       },
     },
     {
-      $addFields: { month: '$_id' },
-    },
-    {
-      $project: { _id: 0 },
-    },
-    {
-      $sort: { numTourStarts: -1 },
+      $sort: { numTour: -1 },
     },
     {
       $limit: 3,
@@ -265,8 +261,8 @@ tourSchema.statics.getTop3busyMonth = async (year) => {
   ]);
 };
 
-tourSchema.statics.getPriceBucket = async () => {
-  return await Tour.aggregate([
+tourSchema.statics.getPriceBucket = async function () {
+  return await this.aggregate([
     {
       $bucket: {
         groupBy: '$price',
@@ -281,8 +277,8 @@ tourSchema.statics.getPriceBucket = async () => {
   ]);
 };
 
-tourSchema.statics.getGuideLoading = async () => {
-  return await Tour.aggregate([
+tourSchema.statics.getGuideLoading = async function () {
+  return await this.aggregate([
     {
       $unwind: '$guides',
     },
@@ -314,7 +310,7 @@ tourSchema.statics.getGuideLoading = async () => {
   ]);
 };
 
-tourSchema.statics.getToursWithin = async (distance, latlng, unit) => {
+tourSchema.statics.getToursWithin = async function (distance, latlng, unit) {
   const [lat, lng] = latlng.split(',');
   if (!lat || !lng)
     next(
@@ -324,13 +320,13 @@ tourSchema.statics.getToursWithin = async (distance, latlng, unit) => {
       ),
     );
   const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
-  const tours = await Tour.find({
+  const tours = await this.find({
     startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }, // lng first in mongodb
   });
   return tours;
 };
 
-tourSchema.statics.getDistances = async (latlng, unit) => {
+tourSchema.statics.getDistances = async function (latlng, unit) {
   const [lat, lng] = latlng.split(',');
   if (!lat || !lng)
     next(
@@ -340,7 +336,7 @@ tourSchema.statics.getDistances = async (latlng, unit) => {
       ),
     );
   const multiplier = unit === 'mi' ? 0.000621371192 : 0.001;
-  const distances = await Tour.aggregate([
+  const distances = await this.aggregate([
     {
       $geoNear: {
         near: {

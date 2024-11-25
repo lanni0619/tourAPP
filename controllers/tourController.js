@@ -1,10 +1,12 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const Tour = require('../models/tourModel');
+const crypto = require('crypto');
+
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
-
+const redisClient = require('../utils/redisClient');
 const multerStorage = multer.memoryStorage();
 
 // ==================== Middleware
@@ -30,7 +32,7 @@ exports.uploadTourImages = upload.fields([
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
   // console.log(req.files);
 
-  if (!req.files.imageCover || !req.files.images) return next();
+  if (!req.files || !req.files.imageCover || !req.files.images) return next();
 
   // 1) Cover
   req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
@@ -95,14 +97,29 @@ exports.groupByDifficulty = catchAsync(async (req, res, next) => {
 
 // Top3 busy month in a specific year (Solve business problem)
 exports.getTop3busyMonth = catchAsync(async (req, res, next) => {
-  // 2021
+  // 1) Get Query
   const year = req.params.year * 1;
-  const plan = await Tour.getTop3busyMonth(year);
+
+  // 2) Create Cache Key
+  const queryHash = crypto
+    .createHash('md5')
+    .update(JSON.stringify(year))
+    .digest('hex');
+  const cacheKey = `cache:aggregation:getTop3busyMonth:${queryHash}`;
+
+  // 3) Get data from cahce or model
+  let result = JSON.parse(await redisClient.get(cacheKey));
+  if (!result) {
+    result = await Tour.getTop3busyMonth(year);
+    if (result.length)
+      await redisClient.setEx(cacheKey, 3600, JSON.stringify(result)); //sec
+  }
+
   res.status(200).json({
     status: 'success',
-    result: plan.length,
+    msg: 'The field of _id means month',
     data: {
-      plan,
+      result,
     },
   });
 });
