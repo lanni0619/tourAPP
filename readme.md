@@ -1,6 +1,8 @@
 # Booking Tour App
 
-Deployment URL 🥾: https://wang-bookingtour.com
+Deployment URL 🥾:
+https://tourapp-production.up.railway.app/
+https://wang-bookingtour.com
 
 ## Outline
 
