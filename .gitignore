@@ -1,17 +1,14 @@
-node_modules
+#node
 config.env
-test.js
-.cache
-.gitattributes
-.eslintrc.json
-.prettierrc
+node_modules
 dev-data
 
 # AWS
 ec2-webapp.pem
 webserver.pem
+docker
 
-# docker
-docker-compose.yaml
-dockerfile
-.dockerignore
+#coding style
+.gitattributes
+.eslintrc.json
+.prettierrc
