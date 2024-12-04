@@ -67,6 +67,8 @@ https://tourapp-production.up.railway.app/
 - Enable https using certbot for secure connection.
 
 <img src="https://i.imgur.com/MhHkr0w.jpeg" width="480px"></img>
+https://www.wang-bookingtour.com
+(Temporarily closed due to traffic charges🥲)
 
 ## Website Guideline
 
