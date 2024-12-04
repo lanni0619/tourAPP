@@ -1,4 +1,4 @@
-# Booking Tour App
+# Tour Booking Website
 
 Deployment URL 🥾:
 https://tourapp-production.up.railway.app/
