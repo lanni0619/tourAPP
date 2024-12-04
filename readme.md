@@ -1,7 +1,7 @@
 # Tour Booking Website
 
 Deployment URL 🥾:
-https://www.wang-bookingtour.com
+https://wang-bookingtour.com
 
 ## Outline
 
