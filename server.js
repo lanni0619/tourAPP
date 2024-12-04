@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-// Subscribe Uncaught Exceptions
-// Example: console.log(x); (x is undefine variable)
 process.on('uncaughtException', (err) => {
   console.log(`💥[Uncaught Exception] Shuting down...`);
   console.log(err);
@@ -30,7 +28,6 @@ const server = app.listen(port, () => {
 });
 
 // Subscribe Unhandled Rejections
-// Last Safety Net
 process.on('unhandledRejection', (err) => {
   console.log(`💥[Unhandled Rejection] Error from outside of express.`);
   console.log(err);

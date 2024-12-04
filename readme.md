@@ -2,28 +2,68 @@
 
 Deployment URL 🥾:
 https://tourapp-production.up.railway.app/
-https://wang-bookingtour.com
 
 ## Outline
 
 - [Overview](#overview)
-- [Tech Stack](#Tech-Stack)
-- [Website Guideline](#Website-Guideline)
+- [API Features](#api-features)
+- [Data Model](#data-model)
+- [Authentication](#authentication)
+- [Deployment](#deployment)
+- [Website Guideline](#website-guideline)
 - [API Guideline](#API-Guideline)
 
 ## Overview
 
-- Designed to connects travelers with guides.
-- Guide can post detailed tour information.
-- User can browse tours, make bookings, leave reviews and provide ratings.
-- Creating a space for interaction and feedback.
+- Tech Stack
+  [![Node](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/docs/latest/api/)
+  [![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)
+  [![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/docs/)
+  [![Pug](https://img.shields.io/badge/Pug-FFF?style=for-the-badge&logo=pug&logoColor=A86454)](https://pugjs.org/api/getting-started.html)
+- Architecture: Server-side rendering | MVC
+- API: CRUD | Statistics | Login | Logut | Signup
+- DB: Referencing | Embedding | Pre-Post hook
+- Optimization: Index | Redis | Aggregation
+- Authentication: JWT | Refresh & Access Token | Whitelist
+- Security: Rate Limiter | XSS | NoSQL Injection
+- Deployment: Docker | Nginx | AWS EC2
 
-## Tech Stack
+## API Features
 
-[![Node](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/docs/latest/api/)
-[![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/docs/)
-[![Pug](https://img.shields.io/badge/Pug-FFF?style=for-the-badge&logo=pug&logoColor=A86454)](https://pugjs.org/api/getting-started.html)
+- Restful API with CRUD operations.
+- Using mongodb aggregation pipeline to generate statistics.
+- Using cache to reduce database loading.
+- Using express error handling middleware to collect error message.
+- Exposing known error or generic message to client in production.
+
+## Data Model
+
+- User, Tour, Review, Booking and Location collections are built.
+- Modeling data by relationship type and access pattern.
+- Using index & compound index to improve performance.
+- Using pre and post hook to add custom logic.
+  <img src="https://i.imgur.com/32yGZz3.png" width="600px"></img>
+
+## Authentication
+
+- Protecting routes by JWT and role-based access control.
+- Using redis to build JWT whitelist.
+- Refresh & access token are sent when login
+- Refresh token used to re-authenticate user & obtain new access token.
+- Access token used to gain access of resouce.
+
+  | role/resource | tour | user | review | booking |
+  | ------------- | ---- | ---- | ------ | ------- |
+  | guest         | ⭕   | ❌   | ❌     | ❌      |
+  | user          | ⭕   | ❌   | ⭕     | ❌      |
+  | lead-guide    | ⭕   | ❌   | ❌     | ⭕      |
+  | admin         | ⭕   | ⭕   | ⭕     | ⭕      |
+
+## Deployment
+
+- Running docker container in AWS EC2 instances.
+- Using nginx as a reverse proxy.
+- Enable https using certbot for secure connection.
 
 ## Website Guideline
 
@@ -61,12 +101,3 @@ https://wang-bookingtour.com
   <li>Forgot & reset password API are available.</li>
   <li>More information in <a href="https://documenter.getpostman.com/view/36501836/2sA3s4jq31">POSTMAN Document</a></li>
 </ul>
-
-**Account permission**
-
-| role/data  | tour | user | review | booking |
-| ---------- | ---- | ---- | ------ | ------- |
-| guest      | ⭕   | ❌   | ❌     | ❌      |
-| user       | ⭕   | ❌   | ⭕     | ❌      |
-| lead-guide | ⭕   | ❌   | ❌     | ⭕      |
-| admin      | ⭕   | ⭕   | ⭕     | ⭕      |

@@ -7,12 +7,9 @@ const router = express.Router();
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
-
-// Password Reset Functionality
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
-// ==================== API For user
 // Protect by Refresh token
 router.use(authController.protectByRefresh);
 router.patch('/updateMyPassword', authController.updatePassword);
@@ -26,7 +23,6 @@ router.patch(
 router.delete('/deleteMe', userController.deleteMe);
 router.get('/token', authController.getAccessToken);
 
-// ==================== API For
 // Protect by access token
 router.use(authController.protectByAccess);
 router.use(authController.restrictTo('admin'));

@@ -15,7 +15,6 @@ router
     reviewController.createReview,
   );
 
-// router.use(authController.protectByAccess);
 router
   .route('/:id')
   .get(reviewController.getReview)

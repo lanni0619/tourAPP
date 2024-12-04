@@ -26,10 +26,4 @@ router.get(
   viewController.getMyReviews,
 );
 
-// router.post(
-//   '/submit-user-data',
-//   authController.protectByAccess,
-//   viewController.updateUserData,
-// );
-
 module.exports = router;

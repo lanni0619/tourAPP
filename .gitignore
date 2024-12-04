@@ -12,6 +12,6 @@ ec2-webapp.pem
 webserver.pem
 
 # docker
-# docker-compose.yaml
-# dockerfile
-# .dockerignore
+docker-compose.yaml
+dockerfile
+.dockerignore
