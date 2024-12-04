@@ -34,8 +34,7 @@ https://tourapp-production.up.railway.app/
 - Using cache to reduce database loading.
 - Using express error handling middleware to collect error message.
 - Exposing known error or generic message to client in production.
-  <li>More information in <a href="https://documenter.getpostman.com/view/36501836/2sA3s4jq31">POSTMAN Document</a></li>
-</ul>
+- More information in <a href="https://documenter.getpostman.com/view/36501836/2sA3s4jq31">POSTMAN Document</a>
 
 ## Data Model
 
