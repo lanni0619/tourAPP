@@ -44,7 +44,7 @@ https://tourapp-production.up.railway.app/
 - Using index & compound index to improve performance.
 - Using pre and post hook to add custom logic.
 
-<img src="https://i.imgur.com/32yGZz3.png" width="660px"></img>
+<img src="https://i.imgur.com/RXmQ1lW.png" width="660px"></img>
 
 ## Authentication
 
@@ -67,7 +67,7 @@ https://tourapp-production.up.railway.app/
 - Using nginx as a reverse proxy.
 - Enable https using certbot for secure connection.
 
-<img src="https://i.imgur.com/MhHkr0w.jpeg" width="360px"></img>
+<img src="https://i.imgur.com/MhHkr0w.jpeg" width="480px"></img>
 
 ## Website Guideline
 
