@@ -50,15 +50,15 @@ https://wang-bookingtour.com
 - Protecting routes by JWT and role-based access control.
 - Using redis to build JWT whitelist.
 - Refresh & access token are sent when login
-- Refresh token used to re-authenticate user & obtain new access token.
-- Access token used to gain access of resouce.
+- Refresh token is used to re-authenticate user & obtain new access token.
+- Access token is used to gain access of resouce.
 
-  | role/resource | tour | user | review | booking |
-  | ------------- | ---- | ---- | ------ | ------- |
-  | guest         | ⭕   | ❌   | ❌     | ❌      |
-  | user          | ⭕   | ❌   | ⭕     | ❌      |
-  | lead-guide    | ⭕   | ❌   | ❌     | ⭕      |
-  | admin         | ⭕   | ⭕   | ⭕     | ⭕      |
+| role/resource | tour | user | review | booking |
+| ------------- | ---- | ---- | ------ | ------- |
+| guest         | ⭕   | ❌   | ❌     | ❌      |
+| user          | ⭕   | ❌   | ⭕     | ❌      |
+| lead-guide    | ⭕   | ❌   | ❌     | ⭕      |
+| admin         | ⭕   | ⭕   | ⭕     | ⭕      |
 
 ## Deployment
 

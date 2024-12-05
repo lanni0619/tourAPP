@@ -7,6 +7,8 @@ dev-data
 ec2-webapp.pem
 webserver.pem
 docker
+.dockerignore
+dockerfile
 
 #coding style
 .gitattributes
