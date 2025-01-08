@@ -304,6 +304,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
+  user.passwordChangedAt = Date.now(); // To ensure psChange date < token issue date
   await user.save();
   // 3. Update the changePasswordAt properties for the user (pre-save-hook)
 
@@ -327,6 +328,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 3) If so, update the password
   user.password = password;
   user.passwordConfirm = passwordConfirm;
+  user.passwordChangedAt = Date.now(); // To ensure psChange date < token issue date
   await user.save();
 
   // 4) log user in, send JWT
