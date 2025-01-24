@@ -68,6 +68,9 @@ app.use(
 app.use(compression());
 
 // ---------- API Routes ----------
+app.use('/test', (req, res) => {
+  res.status(200).json({ results: 1 });
+});
 app.use('/', viewRouter);
 app.use('/api/v1/tours', cors(), tourRouter);
 app.use('/api/v1/users', userRouter);
