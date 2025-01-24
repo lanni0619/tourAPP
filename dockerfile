@@ -1,5 +1,4 @@
 FROM node:18-slim
-# Why use version 13.x ?
 
 WORKDIR /app
 
