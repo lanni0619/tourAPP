@@ -16,4 +16,4 @@ jobs:
       - name: Delete old docker container
         run: docker rm -f node-webapp-container || true
       - name: Run Docker Container
-        run: docker run -d -p 80:3000 --name node-webapp-container lanni0619/node-webapp
+        run: docker run -d -p 3000:3000 --name node-webapp-container lanni0619/node-webapp
