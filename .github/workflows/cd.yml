@@ -14,7 +14,7 @@ jobs:
         run: docker pull lanni0619/node-webapp:latest
       - name: Create .env file
         run: |
-          echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" >> /home/ec2-user/actions-runner/.env
+          echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" > /home/ec2-user/actions-runner/.env
           echo "BREVO_SMTP_APIKEY=${{ secrets.BREVO_SMTP_APIKEY }}" >> /home/ec2-user/actions-runner/.env
           echo "BREVO_SMTP_LOGIN=${{ secrets.BREVO_SMTP_LOGIN }}" >> /home/ec2-user/actions-runner/.env
           echo "BREVO_SMTP_PORT=${{ secrets.BREVO_SMTP_PORT }}" >> /home/ec2-user/actions-runner/.env
