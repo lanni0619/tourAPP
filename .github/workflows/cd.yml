@@ -22,7 +22,4 @@ jobs:
         run: docker rm -f node-webapp-container || true
 
       - name: Run Docker Container
-        run: docker run -d -p 3000:3000 \
-          --name node-webapp-container \
-          --env-file .env \
-          lanni0619/node-webapp
+        run: docker run -d -p 3000:3000 --name node-webapp-container --env-file .env lanni0619/node-webapp
