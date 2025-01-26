@@ -9,11 +9,20 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-
     steps:
       - name: Pull docker image
         run: docker pull lanni0619/node-webapp:latest
+      - name: Create .env file
+        run: |
+          for secret in $(env | grep "^ENV_" | awk -F= '{print $1}'); do
+            echo "$secret=${!secret}" >> .env
+          done
+
       - name: Delete old docker container
         run: docker rm -f node-webapp-container || true
+
       - name: Run Docker Container
-        run: docker run -d -p 3000:3000 --name node-webapp-container lanni0619/node-webapp
+        run: docker run -d -p 3000:3000 \
+          --name node-webapp-container \
+          --env-file .env \
+          lanni0619/node-webapp
