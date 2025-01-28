@@ -14,29 +14,29 @@ jobs:
         run: docker pull lanni0619/node-webapp:latest
       - name: Create .env file
         run: |
-          echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" > /home/ec2-user/actions-runner/.env
-          echo "BREVO_SMTP_APIKEY=${{ secrets.BREVO_SMTP_APIKEY }}" >> /home/ec2-user/actions-runner/.env
-          echo "BREVO_SMTP_LOGIN=${{ secrets.BREVO_SMTP_LOGIN }}" >> /home/ec2-user/actions-runner/.env
-          echo "BREVO_SMTP_PORT=${{ secrets.BREVO_SMTP_PORT }}" >> /home/ec2-user/actions-runner/.env
-          echo "BREVO_SMTP_SERVER=${{ secrets.BREVO_SMTP_SERVER }}" >> /home/ec2-user/actions-runner/.env
-          echo "DATABASE_LOCAL=${{ secrets.DATABASE_LOCAL }}" >> /home/ec2-user/actions-runner/.env          
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> /home/ec2-user/actions-runner/.env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> /home/ec2-user/actions-runner/.env
-          echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> /home/ec2-user/actions-runner/.env
-          echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> /home/ec2-user/actions-runner/.env          
-          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> /home/ec2-user/actions-runner/.env
-          echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> /home/ec2-user/actions-runner/.env
-          echo "EMAIL_USERNAME=${{ secrets.EMAIL_USERNAME }}" >> /home/ec2-user/actions-runner/.env
-          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ec2-user/actions-runner/.env
-          echo "PORT=${{ secrets.PORT }}" >> /home/ec2-user/actions-runner/.env
-          echo "REDIS_DEFAULT_EXPIRATION=${{ secrets.REDIS_DEFAULT_EXPIRATION }}" >> /home/ec2-user/actions-runner/.env
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> /home/ec2-user/actions-runner/.env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> /home/ec2-user/actions-runner/.env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> /home/ec2-user/actions-runner/.env
-          echo "REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}" >> /home/ec2-user/actions-runner/.env
-          echo "SENDGRID_RECOVERY_CODE_LANNI0619=${{ secrets.SENDGRID_RECOVERY_CODE_LANNI0619 }}" >> /home/ec2-user/actions-runner/.env
-          echo "SENDGRID_RECOVERY_CODE_SHENGUA257=${{ secrets.SENDGRID_RECOVERY_CODE_SHENGUA257 }}" >> /home/ec2-user/actions-runner/.env
-          echo "STRIPE_SECRETKEY=${{ secrets.STRIPE_SECRETKEY }}" >> /home/ec2-user/actions-runner/.env
+          echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" > .env
+          echo "BREVO_SMTP_APIKEY=${{ secrets.BREVO_SMTP_APIKEY }}" >> .env
+          echo "BREVO_SMTP_LOGIN=${{ secrets.BREVO_SMTP_LOGIN }}" >> .env
+          echo "BREVO_SMTP_PORT=${{ secrets.BREVO_SMTP_PORT }}" >> .env
+          echo "BREVO_SMTP_SERVER=${{ secrets.BREVO_SMTP_SERVER }}" >> .env
+          echo "DATABASE_LOCAL=${{ secrets.DATABASE_LOCAL }}" >> .env          
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env
+          echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> .env          
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+          echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> .env
+          echo "EMAIL_USERNAME=${{ secrets.EMAIL_USERNAME }}" >> .env
+          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "REDIS_DEFAULT_EXPIRATION=${{ secrets.REDIS_DEFAULT_EXPIRATION }}" >> .env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
+          echo "REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}" >> .env
+          echo "SENDGRID_RECOVERY_CODE_LANNI0619=${{ secrets.SENDGRID_RECOVERY_CODE_LANNI0619 }}" >> .env
+          echo "SENDGRID_RECOVERY_CODE_SHENGUA257=${{ secrets.SENDGRID_RECOVERY_CODE_SHENGUA257 }}" >> .env
+          echo "STRIPE_SECRETKEY=${{ secrets.STRIPE_SECRETKEY }}" >> .env
 
       - name: Delete old docker container
         run: docker rm -f node-webapp-container || true
