@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Pull docker image
         run: docker pull lanni0619/node-webapp:latest
+      - name: Set permissions for .env
+        run: chmod 600 .env
       - name: Create .env file
         run: |
           echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" > .env
